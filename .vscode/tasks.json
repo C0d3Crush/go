@@ -1,0 +1,42 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "CMake: build",
+            "command": "/Applications/CMake.app/Contents/bin/cmake",
+            "args": [
+                "--build",
+                "${workspaceFolder}/build"
+            ],
+            "type": "shell",
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Generated task by Debugger."
+        },
+        {
+            "type": "cppbuild",
+            "label": "C/C++: g++ Aktive Datei kompilieren",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Vom Debugger generierte Aufgabe."
+        }
+    ]
+}
