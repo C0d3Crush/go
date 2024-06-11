@@ -1,3 +1,0 @@
-/Users/lukas/Documents/vscode/projects/go_arcade/datas_tructure_test/out/build/Clang 12.0.0 x86_64-apple-darwin19.6.0/CMakeFiles/a.dir
-/Users/lukas/Documents/vscode/projects/go_arcade/datas_tructure_test/out/build/Clang 12.0.0 x86_64-apple-darwin19.6.0/CMakeFiles/edit_cache.dir
-/Users/lukas/Documents/vscode/projects/go_arcade/datas_tructure_test/out/build/Clang 12.0.0 x86_64-apple-darwin19.6.0/CMakeFiles/rebuild_cache.dir

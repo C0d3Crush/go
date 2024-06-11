@@ -1,3 +1,0 @@
-/Users/lukas/Documents/vscode/projects/go_arcade/datas_tructure_test/build/CMakeFiles/a.dir
-/Users/lukas/Documents/vscode/projects/go_arcade/datas_tructure_test/build/CMakeFiles/edit_cache.dir
-/Users/lukas/Documents/vscode/projects/go_arcade/datas_tructure_test/build/CMakeFiles/rebuild_cache.dir
