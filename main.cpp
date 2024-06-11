@@ -9,10 +9,8 @@ int main ()
     std::vector<Node> nodes;
 
     Board board(9, nodes);
-    
-    std::vector<std::pair<int, int>> moves = board.parseSGF("../data/sample.sgf");
-    /*
-    moves = {
+        
+    std::vector<std::pair<int, int>> moves = {
         {0,0}, {0,1}, 
         {1,0}, {4,4}, 
         {2,0}, {4,5}, 
@@ -23,8 +21,6 @@ int main ()
         {1,8}, {2,1},
         {2,8}, {1,1}
     };
-    */
-    
 
     while(is_running)
     {
@@ -60,8 +56,8 @@ int main ()
         board.print_group();
 
 
-        std::cout << "is running?";
-        std::cin >> is_running;
+        //std::cout << "is running?";
+        //std::cin >> is_running;
     }
     
     std::cout << "terminated." << std::endl;
