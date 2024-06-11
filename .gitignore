@@ -1,1 +1,7 @@
 test.txt
+
+out/
+
+CMakePresets.json
+
+/build/*
