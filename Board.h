@@ -52,6 +52,10 @@ public:
     void print_group();
     void print();
     void print_liberties();
+
+    // file access
+    std::vector<std::pair<int, int>> Board::parseSGF(const std::string& filePath);
+
 };
 
 #endif // GAME_H

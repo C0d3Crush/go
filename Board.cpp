@@ -109,11 +109,6 @@ int *Board::get_lib(int index)
     return &liberties[index];
 }
 
-void Board::kill_check()
-{
-
-}
-
 void Board::dfs(const int index)
 {
 
@@ -315,3 +310,81 @@ void Board::update_liberties()
         }
     }
 }
+
+std::vector<std::pair<int, int>> Board::parseSGF(const std::string& filePath) {
+
+    std::vector<std::pair<int, int>> moves;
+    int count = 0;
+
+    std::ifstream file(filePath);
+    if (!file) {
+        std::cerr << "Failed to open SGF file: " << filePath << std::endl;
+        return moves;
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        if (line.find("SZ[") != std::string::npos) {
+            // Extract nodes size
+            int boardSize = std::stoi(line.substr(line.find("SZ[") + 3, line.find("]") - (line.find("SZ[") + 3)));
+            s = boardSize;
+            std::cout << "Board Size: " << boardSize << std::endl;
+        }
+        if (line.find("KM[") != std::string::npos) {
+            // Extract komi
+            float komi = std::stof(line.substr(line.find("KM[") + 3, line.find("]") - (line.find("KM[") + 3)));
+            komi = komi;
+            std::cout << "Komi: " << komi << std::endl;
+        }
+        if (line.find("RU[") != std::string::npos) {
+            // Extract ruleset
+            std::string ruleset = line.substr(line.find("RU[") + 3, line.find("]") - (line.find("RU[") + 3));
+            ruleset = ruleset;
+            std::cout << "Ruleset: " << ruleset << std::endl;
+        }
+        if (line.find("RE[") != std::string::npos) {
+            // Extract result
+            std::string result = line.substr(line.find("RE[") + 3, line.find("]") - (line.find("RE[") + 3));
+            result = result;
+            std::cout << "Result: " << result << std::endl;
+        }
+        if (line.find("PB[") != std::string::npos) {
+            // Extract black player's name
+            std::string black_player = line.substr(line.find("PB[") + 3, line.find("]") - (line.find("PB[") + 3));
+            black_player = black_player;
+            std::cout << "Black Player: " << black_player << std::endl;
+        }
+        if (line.find("PW[") != std::string::npos) {
+            // Extract white player's name
+            std::string black_player = line.substr(line.find("PW[") + 3, line.find("]") - (line.find("PW[") + 3));
+            black_player = black_player;
+            std::cout << "White Player: " << black_player << std::endl;
+        }
+        if (line.find(";B[") != std::string::npos || line.find(";W[") != std::string::npos) {
+            line.erase(0, line.find(";") + 1);
+            while (line.size() != 0) {
+                std::string move = line.substr(0, line.find(";"));
+                line.erase(0, line.find(";"));
+
+                char player, x, y;
+                if (move.size() == 5 || move.size() == 6 || move.size() == 7) {
+                    player = move[0];
+                    x = move[2];
+                    y = move[3];
+                } else if (move.size() == 3) {
+                    player = move[0];
+                    x = '-';
+                    y = '-';
+                } else {
+                    std::cerr << "Error: invalid move size: " << move.size() << std::endl;
+                }
+                
+                moves.push_back({x-97, y-97});
+                count++;
+                line.erase(0, 1);
+            }
+        }
+    }
+    return moves;
+}
+

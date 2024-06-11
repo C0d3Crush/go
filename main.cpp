@@ -9,18 +9,9 @@ int main ()
     std::vector<Node> nodes;
 
     Board board(9, nodes);
-        
-    std::vector<std::pair<int, int>> moves = {
-        {0,0}, {0,1}, 
-        {1,0}, {4,4}, 
-        {2,0}, {4,5}, 
-        {3,4}, {2,4}, 
-        {1,4}, {0,4}, 
-        {0,3}, {0,2}, 
-        {0,8}, {3,0},
-        {1,8}, {2,1},
-        {2,8}, {1,1}
-    };
+
+    std::vector<std::pair<int, int>> moves = board.parseSGF("../data/sample.sgf");
+
 
     while(is_running)
     {
