@@ -37,7 +37,7 @@ int main ()
         board.print();
         std::cout << std::endl;
 
-        board.update();             // this is doing all the live and death action
+        board.update();             // this is doing all the life and death action
 
         std::cout << "Printing lberties: " << std::endl;    //print liberties
         board.print_liberties();
