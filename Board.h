@@ -54,7 +54,7 @@ public:
     void print_liberties();
 
     // file access
-    std::vector<std::pair<int, int>> Board::parseSGF(const std::string& filePath);
+    std::vector<std::pair<int, int>> parseSGF(const std::string& filePath);
 
 };
 
