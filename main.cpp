@@ -28,39 +28,29 @@ int main ()
         std::cout << std::endl;
 
         int x = moves[cycle].first;
-        int y = moves[cycle].second;
-
-        //std::cout << "Board bevor move: (x: " << x << "; "<< y << ")" << std::endl;
-        //board.print();
+        int y = moves[cycle].second;    //making x and y 
     
-        if (board.add_move(moves[cycle].first, moves[cycle].second, player)) 
-            std::cout << "Error: bad move" << std::endl;
+        if (board.add_move(moves[cycle].first, moves[cycle].second, player)) // setting x and y to board and checking legality
+            std::cerr << "Error: bad move" << std::endl;
 
-        std::cout <<"Board after move: (x: " << x << "; "<< y << ")" << std::endl;
+        std::cout <<"Board after move: (x: " << x << "; "<< y << ")" << std::endl;  //printing board
         board.print();
-
-        board.update_groups();
         std::cout << std::endl;
 
-        board.update_liberties();
-        std::cout << "Printing lberties: " << std::endl;
+        board.update();             // this is doing all the live and death action
+
+        std::cout << "Printing lberties: " << std::endl;    //print liberties
         board.print_liberties();
         std::cout << std::endl;
 
-        board.kill_check();
-
-        if(player == 'W') player = 'B';
+        if(player == 'W') player = 'B';     //change colour for next move/cycle
         else player = 'W';        
         
-        cycle++;
+        cycle++;    // increment game cycle
         if (cycle == moves.size()) is_running = false;
 
-        std::cout << "groups: " << std::endl;
+        std::cout << "groups: " << std::endl;   //print groups that are found in the dfs search, test this profoundly
         board.print_group();
-
-
-        //std::cout << "is running?";
-        //std::cin >> is_running;
     }
     
     std::cout << "terminated." << std::endl;

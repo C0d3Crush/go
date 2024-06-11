@@ -22,12 +22,15 @@ private:
     std::string white_player; 
 
 public:
-    // Constructor and Destructor
     Board(int size, std::vector<Node>& vect);
     ~Board();
 
-    // Member functions
-    std::vector<std::pair<int, int>> parseSGF(const std::string& filePath);
+    // we need a draw function in the future here!
+
+    void update();
+    void update_groups();
+    void update_liberties();
+
     int get_index(int x, int y);
     int get_x(int index);
     int get_y(int index);
@@ -35,26 +38,19 @@ public:
     Node* get_node(int index);
     int get_liberties(int x, int y);
     int* get_lib(int index);
-
+    std::vector<int> get_group(int index);
     int add_move(int x, int y, char player);
-    //void init_board();
-
-    void kill_check();
     
     void dfs(int index);
 
+    // reset
     void reset_visited();
     void reset_children();
     void reset_parent();
 
-    void update_groups();
-    void update_liberties();
-
-    // Testin functions
+    // print
     void print_group();
     void print();
-    std::vector<int> get_group(int index);
-    Node at(int index);
     void print_liberties();
 };
 

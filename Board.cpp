@@ -26,6 +26,12 @@ Board::Board(int size, std::vector<Node>& vect) {
 // Destructor
 Board::~Board() {}
 
+void Board::update()
+{
+    update_groups();
+    update_liberties();
+}
+
 int Board::get_index(int x, int y) {
     return (y * h) + x;
 }
@@ -271,13 +277,7 @@ std::vector<int> Board::get_group(int index)
     std::vector<int> vect;
     vect.push_back(index);
     nodes[index].print_children(vect);
-    //reset_visited();
     return vect;
-}
-
-Node Board::at(int index)
-{
-    return nodes[index];
 }
 
 void Board::print_liberties()
