@@ -240,9 +240,14 @@ void Board::print_group()
         if (!(nodes[k].get_player() == '.') && !(nodes[k].get_visited()))
         {
             bool alive = false;
-            std::cout << "Printing " << k << "-tree: " << std::endl;
-            std::cout << "player: " << nodes[k].get_player()<<std::endl;
             std::vector<int> vect = get_group(k);
+
+            if (vect.size() == 1) 
+            {
+                continue;
+            }
+
+            std::cout << "Printing " << k << "-tree, colour: " << nodes[k].get_player()<<std::endl;
 
             for (int l = 0; l < vect.size(); l++) 
             {

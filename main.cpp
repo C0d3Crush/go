@@ -25,6 +25,7 @@ int main ()
     while(is_running)
     {
         std::cout << "<<===========>> Moves: " << cycle << " Player: "<< player <<" <<===========>>" << std::endl;
+        std::cout << std::endl;
 
         int x = moves[cycle].first;
         int y = moves[cycle].second;
@@ -39,10 +40,12 @@ int main ()
         board.print();
 
         board.update_groups();
-        board.update_liberties();
+        std::cout << std::endl;
 
+        board.update_liberties();
         std::cout << "Printing lberties: " << std::endl;
         board.print_liberties();
+        std::cout << std::endl;
 
         board.kill_check();
 
