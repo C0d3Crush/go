@@ -38,12 +38,12 @@ int Board::get_index(int x, int y) {
 
 int Board::get_x(int index)
 {
-    return w / index;
+    return index / w;
 }
 
 int Board::get_y(int index)
 {
-    return h % index;
+    return index % h;
 }
 
 int Board::size()
