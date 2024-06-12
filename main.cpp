@@ -169,16 +169,8 @@ int main ()
                         std::cout << "cycle: " << cycle << std::endl;
                         break;
                     case SDLK_BACKSPACE:
-                        /*if(0 < move_count && gameData.moves.size() == move_count)
-                        {
-                            gameData.moves.pop_back();
-                            //handleDeleteKey();
-                            move_count--;
-                        }
-                        */
                         break;
                     case SDLK_s:
-                            //writeSGF("../sgf_files/sample3.sgf", gameData);
                         break;
                     case SDLK_q:
                         is_running = false;
@@ -188,35 +180,24 @@ int main ()
 
             }
         }
-        //std::cout << "<<===========>> Moves: " << cycle << " Player: "<< player <<" <<===========>>" << std::endl;
-        //std::cout << std::endl;
-
         int x = moves[cycle].first;
-        int y = moves[cycle].second;    //making x and y 
+        int y = moves[cycle].second;
     
         if (board.add_move(moves[cycle].first, moves[cycle].second, player)) // setting x and y to board and checking legality
-            //std::cerr << "Error: bad move" << std::endl;
+            std::cerr << "Error: bad move" << std::endl;
 
-        //std::cout <<"Board after move: (x: " << x << "; "<< y << ")" << std::endl;  //printing board
-        //board.print();
-        //std::cout << std::endl;
+        board.update();             
 
-        board.update();             // this is doing all the life and death action
-
-        //std::cout << "Printing lberties: " << std::endl;    //print liberties
-        //board.print_liberties();
-        //std::cout << std::endl;
-
-        if(player == 'W') player = 'B';     //change colour for next move/cycle
+        if(player == 'W') player = 'B';     
         else player = 'W';        
         
         if (cycle == moves.size() - 1) is_running = false;
 
 
-        std::cout << "groups: " << std::endl;   //print groups that are found in the dfs search, test this profoundly
+        std::cout << "groups: " << std::endl;   
         board.print_group();
 
-        SDL_SetRenderDrawColor(renderer, 255, 204, 153, 255); // Board color
+        SDL_SetRenderDrawColor(renderer, 255, 204, 153, 255); 
         SDL_RenderClear(renderer);
 
         drawBoard(renderer, board.size());
