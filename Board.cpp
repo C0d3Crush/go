@@ -139,7 +139,7 @@ void Board::dfs(const int index)
     }
 
     //Down
-    if (y < s - 1) 
+    if (y < h - 1) 
     {
         Node* node_down;
         int index_down = index + w;
@@ -169,7 +169,7 @@ void Board::dfs(const int index)
     }
 
     //Right
-    if(x < s - 1)
+    if(x < w - 1)
     {
         Node* node_right;
         int index_right = index + 1;
@@ -186,7 +186,7 @@ void Board::dfs(const int index)
 
 void Board::reset_visited()
 {
-    for (int i = 0; i < s; i++) 
+    for (int i = 0; i < nodes.size(); i++) 
     {
         nodes[i].set_visited(false);
     }
@@ -194,7 +194,7 @@ void Board::reset_visited()
 
 void Board::reset_children()
 {
-    for (int i = 0; i < s; i++) 
+    for (int i = 0; i < nodes.size(); i++) 
     {
         nodes[i].add_child(nullptr, 0);
         nodes[i].add_child(nullptr, 1);
@@ -205,20 +205,14 @@ void Board::reset_children()
 
 void Board::reset_parent()
 {
-    for (int i = 0; i < s; i++) 
+    for (int i = 0; i < nodes.size(); i++) 
     {
         nodes[i].add_parent(nullptr);
     }
 }
 
 void Board::print()
-{
-    if (s == 0) 
-    {
-        std::cout << "empty array" <<std::endl;
-        return;
-    }
-    
+{   
     for (int i = 0; i < h; i++)
     {
         for (int j = 0; j < w; j++)
@@ -236,7 +230,7 @@ void Board::print_group()
 {
     reset_visited();
 
-    for(int k = 0; k < size(); k++ )
+    for(int k = 0; k < nodes.size(); k++ )
     {
         if (!(nodes[k].get_player() == '.') && !(nodes[k].get_visited()))
         {
@@ -292,7 +286,7 @@ void Board::update_groups()
     reset_children();
     reset_parent();
 
-        for (int i = 0; i < size(); i++)
+        for (int i = 0; i < nodes.size(); i++)
         {
             reset_visited();
             dfs(i);
