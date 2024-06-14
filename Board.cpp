@@ -242,11 +242,11 @@ void Board::print_group()
                 continue;
             }
 
-            std::cout << "Printing " << k << "-tree, colour: " << nodes[k].get_player()<<std::endl;
+            std::cout << "Printing " << "(" <<get_x(vect[k])<< "; " << get_y(k) << ")"  << "-tree, colour: " << nodes[k].get_player()<<std::endl;
 
             for (int l = 0; l < vect.size(); l++) 
             {
-                std::cout << "(" <<get_x(vect[l])<< "; " << get_y(vect[l]) << std::endl;
+                std::cout << "(" <<get_x(vect[l])<< "; " << get_y(vect[l]) << ")" << std::endl;
                 int liberties = *get_lib(vect[l]);
                 if (liberties != 0)
                 {
