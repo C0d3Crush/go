@@ -49,7 +49,7 @@ public:
     void reset_parent();
 
     // print
-    void print_group();
+    std::vector<Node*> print_group();
     void print();
     void print_liberties();
 };

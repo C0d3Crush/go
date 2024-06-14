@@ -195,7 +195,16 @@ int main ()
 
 
         std::cout << "groups: " << std::endl;   
-        board.print_group();
+        std::vector<Node*> heads = board.print_group();
+
+
+        std::cout << "heads:"<<std::endl;
+        for ( auto h : heads) 
+        {
+            int index = h->get_index();
+            std::cout << "(" << board.get_x(index) << ";" << board.get_y(index) << ")"<< std::endl;
+        }
+        std::cout << std::endl;
 
         SDL_SetRenderDrawColor(renderer, 255, 204, 153, 255); 
         SDL_RenderClear(renderer);
