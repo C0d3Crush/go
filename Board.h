@@ -14,6 +14,7 @@ private:
     int s;
     std::vector<Node> nodes;
     std::vector<int> liberties;
+    std::vector<Node*> heads;
 
     float komi; 
     std::string ruleset; 
@@ -49,9 +50,10 @@ public:
     void reset_parent();
 
     // print
-    std::vector<Node*> print_group();
+    void update_heads();
     void print();
     void print_liberties();
+    void print_heads();
 };
 
 #endif // GAME_H

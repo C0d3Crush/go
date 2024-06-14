@@ -228,10 +228,9 @@ void Board::print()
 }
 
 
-std::vector<Node*> Board::print_group()
+void Board::update_heads()
 {
-    std::vector<Node*> heads;
-
+    heads.resize(0);
     reset_visited();
 
     for(int k = 0; k < nodes.size(); k++ )
@@ -241,15 +240,16 @@ std::vector<Node*> Board::print_group()
             bool alive = false;
             std::vector<int> vect = get_group(k);
 
-            if (vect.size() == 1) 
-            {
-                //continue;
-            }
-
             std::cout << "Printing " << "(" <<get_x(k)<< "; " << get_y(k) << ")"  << "-tree, colour: " << nodes[k].get_player()<<std::endl;
 
             heads.push_back(&nodes[k]);
 
+            for (int l = 0; l < vect.size(); l++) 
+            {
+                std::cout << "(" <<get_x(vect[l])<< "; " << get_y(vect[l]) << ")" << std::endl;
+            }
+            
+            /*
             for (int l = 0; l < vect.size(); l++) 
             {
                 std::cout << "(" <<get_x(vect[l])<< "; " << get_y(vect[l]) << ")" << std::endl;
@@ -259,14 +259,15 @@ std::vector<Node*> Board::print_group()
                     alive = true;
                 }
             }
+            
+            */
+            
         //std::cout << std::endl;
         //std::cout << "Alive: "<< alive << std::endl;
         //std::cout << std::endl;
 
         }
     }
-
-    return heads;
 }
 
 std::vector<int> Board::get_group(int index)
@@ -289,6 +290,17 @@ void Board::print_liberties()
     }
 }
 
+void Board::print_heads()
+{
+    std::cout << "heads:"<<std::endl;
+        for ( auto h : heads) 
+        {
+            int index = h->get_index();
+            std::cout << "(" << get_x(index) << ";" << get_y(index) << ")"<< std::endl;
+        }
+        std::cout << std::endl;
+}
+
 void Board::update_groups()
 {
     reset_children();
@@ -299,6 +311,8 @@ void Board::update_groups()
             reset_visited();
             dfs(i);
         }
+
+
 }
 
 void Board::update_liberties()
