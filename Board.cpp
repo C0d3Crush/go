@@ -246,7 +246,7 @@ void Board::print_group()
 
             for (int l = 0; l < vect.size(); l++) 
             {
-                std::cout << vect[l] << ", ";
+                std::cout << "(" <<get_x(vect[l])<< "; " << get_y(vect[l]) << std::endl;
                 int liberties = *get_lib(vect[l]);
                 if (liberties != 0)
                 {
