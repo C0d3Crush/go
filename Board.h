@@ -34,7 +34,7 @@ public:
     int get_index(int x, int y);
     int get_x(int index);
     int get_y(int index);
-    int size();
+    //int size();
     Node* get_node(int index);
     int get_liberties(int x, int y);
     int* get_lib(int index);
@@ -51,7 +51,7 @@ public:
     void reset_parent();
 
     // print
-    void print_group();
+    std::vector<Node*> print_group();
     void print();
     void print_liberties();
 

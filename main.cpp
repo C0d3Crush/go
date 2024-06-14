@@ -37,7 +37,16 @@ int main ()
         if (cycle == moves.size()) is_running = false;
 
         //std::cout << "groups: " << std::endl;   //print groups that are found in the dfs search, test this profoundly
-        board.print_group();
+        std::vector<Node*> heads = board.print_group();
+
+
+        std::cout << "heads:"<<std::endl;
+        for ( auto h : heads) 
+        {
+            int index = h->get_index();
+            std::cout << "(" << board.get_x(index) << ";" << board.get_y(index) << ")"<< std::endl;
+        }
+        std::cout << std::endl;
 
         std::cout <<"Board after move: (x: " << x << "; "<< y << ")" << std::endl;  //printing board
         //board.print();

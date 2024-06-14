@@ -46,10 +46,12 @@ int Board::get_y(int index)
     return index / h;
 }
 
+/*
 int Board::size()
 {
     return s;
 }
+*/
 
 Node *Board::get_node(int index)
 {
@@ -228,8 +230,10 @@ void Board::print()
 }
 
 
-void Board::print_group()
+std::vector<Node*> Board::print_group()
 {
+    std::vector<Node*> heads;
+
     reset_visited();
 
     for(int k = 0; k < nodes.size(); k++ )
@@ -239,14 +243,32 @@ void Board::print_group()
             bool alive = false;
             std::vector<int> vect = get_group(k);
 
+            if (vect.size() == 1) 
+            {
+                //continue;
+            }
+
             std::cout << "Printing " << "(" <<get_x(k)<< "; " << get_y(k) << ")"  << "-tree, colour: " << nodes[k].get_player()<<std::endl;
+
+            heads.push_back(&nodes[k]);
 
             for (int l = 0; l < vect.size(); l++) 
             {
-                std::cout << "(" <<get_x(vect[l])<< "; " << get_y(vect[l])<< ")" << std::endl;
+                std::cout << "(" <<get_x(vect[l])<< "; " << get_y(vect[l]) << ")" << std::endl;
+                int liberties = *get_lib(vect[l]);
+                if (liberties != 0)
+                {
+                    alive = true;
+                }
             }
+        //std::cout << std::endl;
+        //std::cout << "Alive: "<< alive << std::endl;
+        //std::cout << std::endl;
+
         }
     }
+
+    return heads;
 }
 
 std::vector<int> Board::get_group(int index)
