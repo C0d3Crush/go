@@ -38,12 +38,12 @@ int Board::get_index(int x, int y) {
 
 int Board::get_x(int index)
 {
-    return index / w;
+    return index % w;
 }
 
 int Board::get_y(int index)
 {
-    return index % h;
+    return index / h;
 }
 
 int Board::size()
@@ -124,7 +124,7 @@ void Board::dfs(const int index)
     // check seperaly for out of bounds
     
     //up
-    if (y > 0) 
+    if (y >= 0) 
     {
         Node* node_up;
         int index_up = index - w;
@@ -154,7 +154,7 @@ void Board::dfs(const int index)
     }
 
     //Left 
-    if (x > 0)
+    if (x >= 0)
     {
         Node* node_left;
         int index_left = index - 1;
@@ -213,8 +213,10 @@ void Board::reset_parent()
 
 void Board::print()
 {   
+    std::cout<<"_012345678"<<std::endl;
     for (int i = 0; i < h; i++)
     {
+        std::cout<<i;
         for (int j = 0; j < w; j++)
         {
             char player = nodes[get_index(j ,i)].get_player();
@@ -237,26 +239,12 @@ void Board::print_group()
             bool alive = false;
             std::vector<int> vect = get_group(k);
 
-            if (vect.size() == 1) 
-            {
-                continue;
-            }
-
-            std::cout << "Printing " << "(" <<get_x(vect[k])<< "; " << get_y(k) << ")"  << "-tree, colour: " << nodes[k].get_player()<<std::endl;
+            std::cout << "Printing " << "(" <<get_x(k)<< "; " << get_y(k) << ")"  << "-tree, colour: " << nodes[k].get_player()<<std::endl;
 
             for (int l = 0; l < vect.size(); l++) 
             {
-                std::cout << "(" <<get_x(vect[l])<< "; " << get_y(vect[l]) << ")" << std::endl;
-                int liberties = *get_lib(vect[l]);
-                if (liberties != 0)
-                {
-                    alive = true;
-                }
+                std::cout << "(" <<get_x(vect[l])<< "; " << get_y(vect[l])<< ")" << std::endl;
             }
-        std::cout << std::endl;
-        std::cout << "Alive: "<< alive << std::endl;
-        std::cout << std::endl;
-
         }
     }
 }

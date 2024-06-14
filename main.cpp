@@ -24,14 +24,10 @@ int main ()
         if (board.add_move(moves[cycle].first, moves[cycle].second, player)) // setting x and y to board and checking legality
             std::cerr << "Error: bad move" << std::endl;
 
-        std::cout <<"Board after move: (x: " << x << "; "<< y << ")" << std::endl;  //printing board
-        board.print();
-        std::cout << std::endl;
-
         board.update();             // this is doing all the life and death action
 
-        std::cout << "Printing lberties: " << std::endl;    //print liberties
-        board.print_liberties();
+        //std::cout << "Printing lberties: " << std::endl;    //print liberties
+        //board.print_liberties();
         std::cout << std::endl;
 
         if(player == 'W') player = 'B';     //change colour for next move/cycle
@@ -40,8 +36,15 @@ int main ()
         cycle++;    // increment game cycle
         if (cycle == moves.size()) is_running = false;
 
-        std::cout << "groups: " << std::endl;   //print groups that are found in the dfs search, test this profoundly
+        //std::cout << "groups: " << std::endl;   //print groups that are found in the dfs search, test this profoundly
         board.print_group();
+
+        std::cout <<"Board after move: (x: " << x << "; "<< y << ")" << std::endl;  //printing board
+        //board.print();
+        std::cout << std::endl;
+        
+        //int a;
+        //std::cin >>a;
     }
     
     std::cout << "terminated." << std::endl;

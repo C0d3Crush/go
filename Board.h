@@ -40,6 +40,8 @@ public:
     int* get_lib(int index);
     std::vector<int> get_group(int index);
     int add_move(int x, int y, char player);
+
+    bool check_life(int i);
     
     void dfs(int index);
 
