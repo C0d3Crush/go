@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <utility>
 
 #include "Node.h"
 
@@ -31,6 +32,10 @@ public:
     void update();
     void update_groups();
     void update_liberties();
+    void update_life();
+
+    bool find_life(Node* head);
+    void remove_stones(Node* head);
 
     int get_index(int x, int y);
     int get_x(int index);
@@ -39,7 +44,11 @@ public:
     Node* get_node(int index);
     int get_liberties(int x, int y);
     int* get_lib(int index);
-    std::vector<int> get_group(int index);
+
+    std::vector<Node*> get_group(Node* head);  // this one is aperently super epic!
+    void rec_group(Node* head, std::vector<Node*> *nodes);
+
+
     int add_move(int x, int y, char player);
     
     void dfs(int index);
@@ -54,6 +63,8 @@ public:
     void print();
     void print_liberties();
     void print_heads();
+    void print_groups();
+    void print_coords(int index);
 };
 
 #endif // GAME_H

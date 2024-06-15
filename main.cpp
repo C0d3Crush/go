@@ -19,7 +19,8 @@ int main ()
         {0,3}, {0,2}, 
         {0,8}, {3,0},
         {1,8}, {2,1},
-        {2,8}, {1,1}
+        {2,8}, {1,1},
+        {4,8}, {8,1}
     };
 
     while(is_running)
@@ -28,30 +29,26 @@ int main ()
         std::cout << std::endl;
 
         int x = moves[cycle].first;
-        int y = moves[cycle].second;    //making x and y 
+        int y = moves[cycle].second;    
     
-        if (board.add_move(moves[cycle].first, moves[cycle].second, player)) // setting x and y to board and checking legality
-            std::cerr << "Error: bad move" << std::endl;
+        if (board.add_move(moves[cycle].first, moves[cycle].second, player)) std::cerr << "Error: bad move" << std::endl;
 
-        std::cout <<"Board after move: (x: " << x << "; "<< y << ")" << std::endl;  //printing board
+        std::cout << "move: ("<< x << "; " << y << ")" << std::endl;
+
+        board.update();     
+
         board.print();
-        std::cout << std::endl;
-
-        board.update();             // this is doing all the life and death action
-
-        std::cout << "Printing lberties: " << std::endl;    //print liberties
-        board.print_liberties();
-        std::cout << std::endl;
+        //board.print_liberties();
+        //board.print_groups();
+        //board.print_heads();  
 
         if(player == 'W') player = 'B';     //change colour for next move/cycle
-        else player = 'W';        
-        
+        else player = 'W';           
+
         cycle++;    // increment game cycle
         if (cycle == moves.size()) is_running = false;
 
-        std::cout << "groups: " << std::endl;   //print groups that are found in the dfs search, test this profoundly
-        board.update_heads();
-        board.print_heads();        
+   
     }
     
     std::cout << "terminated." << std::endl;
