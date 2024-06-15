@@ -277,7 +277,7 @@ int main ()
             
                 if (board.add_move(moves[move_count].first, moves[move_count].second, player)) 
                 {
-                    //std::cerr << "Error: bad move" << std::endl;
+                    std::cerr << "Error: bad move" << std::endl;
                 }
                 else
                 {

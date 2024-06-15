@@ -359,6 +359,7 @@ void Board::update_liberties()
     }
 }
 
+/*
 void Board::update_life()
 {
     for (auto head : heads)
@@ -367,6 +368,33 @@ void Board::update_life()
         {
             remove_stones(head);
         }
+    }
+}
+*/
+
+void Board::update_life()
+{
+    for (auto head : heads)
+    {
+
+        std::vector<Node*> group = get_group(head);
+        std::vector<int> liberties;
+
+        bool life = false;
+
+        for (auto e : group)
+        {
+            liberties.push_back(e->get_liberties());
+        }
+
+        for (auto e : liberties)
+        {
+            if (e == 0) continue;
+
+            else life = true;
+        }
+
+        if (!life) remove_stones(head); 
     }
 }
 
