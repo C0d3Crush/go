@@ -76,6 +76,35 @@ void drawStones(SDL_Renderer* renderer, Board* board) //const GameData& gameData
     }
 }
 
+void handleMouseClick(const SDL_Event& e, Board* board, char* player, int* cycle, std::vector<std::pair<int, int>>* moves) 
+{
+    if (e.button.button == SDL_BUTTON_LEFT) 
+    {
+        int mouseX = e.button.x;
+        int mouseY = e.button.y;
+
+        int cellSize = (WINDOW_WIDTH - 2 * BOARD_MARGIN) / (board->size() - 1);
+        int gridX = (mouseX - BOARD_MARGIN + cellSize / 2) / cellSize;
+        int gridY = (mouseY - BOARD_MARGIN + cellSize / 2) / cellSize;
+
+        *player = ((*player == 'W') ? 'B' : 'W');
+
+        // Add the new move to the game data
+        //gameData.moves.push_back({static_cast<char>(gridX), static_cast<char>(gridY), player});
+
+        
+
+        //board[gridX-97][gridY-97] = player;
+
+        board->update();
+
+        //cycle++;
+
+
+       std::cout << "player: "<< player << " x: "<< gridX  << " y: "<< gridY <<std::endl;
+    }
+}
+
 int main ()
 {
     int cycle = 0;
@@ -148,24 +177,22 @@ int main ()
             }
             else if (e.type == SDL_MOUSEBUTTONDOWN) 
             {
-                /*
-                if(move_count == gameData.moves.size())
+                if(move_count == moves.size())
                 {
-                    handleMouseClick(e, gameData);
+                    handleMouseClick(e, &board, &player, &cycle, &moves);
                     //print_array(board, gameData.boardSize);
                     move_count++;
                 }
-                */
                 
             } 
             else if (e.type == SDL_KEYDOWN) 
             {
                 switch (e.key.keysym.sym) {
                     case SDLK_LEFT:
-                        cycle--;
+                        if (cycle >= moves.size()-1) cycle--;
                         break;
                     case SDLK_RIGHT:
-                        cycle++;
+                        if (cycle <= moves.size()-1) cycle++;
                         break;
                     case SDLK_BACKSPACE:
                         break;
@@ -187,7 +214,7 @@ int main ()
         
             if (board.add_move(moves[move_count].first, moves[move_count].second, player)) 
             {
-                //std::cerr << "Error: bad move" << std::endl;
+                std::cerr << "Error: bad move" << std::endl;
             }
             else
             {
@@ -220,8 +247,6 @@ int main ()
                 board.update();     
             }
         }
-
-        if (cycle == moves.size()-1) is_running = false;
 
         SDL_SetRenderDrawColor(renderer, 255, 204, 153, 255); 
         SDL_RenderClear(renderer);
