@@ -96,7 +96,8 @@ int main ()
         {0,3}, {0,2}, 
         {0,8}, {3,0},
         {1,8}, {2,1},
-        {2,8}, {1,1}
+        {2,8}, {1,1},
+        {4,8}, {8,1}
     };
 
 
@@ -181,30 +182,28 @@ int main ()
             }
         }
         int x = moves[cycle].first;
-        int y = moves[cycle].second;
+        int y = moves[cycle].second;    
     
-        if (board.add_move(moves[cycle].first, moves[cycle].second, player)) // setting x and y to board and checking legality
-            std::cerr << "Error: bad move" << std::endl;
-
-        board.update();             
-
-        if(player == 'W') player = 'B';     
-        else player = 'W';        
-        
-        if (cycle == moves.size() - 1) is_running = false;
-
-
-        std::cout << "groups: " << std::endl;   
-        std::vector<Node*> heads = board.print_group();
-
-
-        std::cout << "heads:"<<std::endl;
-        for ( auto h : heads) 
+        if (board.add_move(moves[cycle].first, moves[cycle].second, player)) 
         {
-            int index = h->get_index();
-            std::cout << "(" << board.get_x(index) << ";" << board.get_y(index) << ")"<< std::endl;
+            std::cerr << "Error: bad move" << std::endl;
         }
-        std::cout << std::endl;
+        else
+        {
+            if(player == 'W') player = 'B';
+            else player = 'W';    
+        }
+
+        std::cout << "move: ("<< x << "; " << y << ")" << std::endl;
+
+        board.update();     
+
+        board.print();
+        //board.print_liberties();
+        //board.print_groups();
+        //board.print_heads();         
+
+        if (cycle == moves.size()) is_running = false;
 
         SDL_SetRenderDrawColor(renderer, 255, 204, 153, 255); 
         SDL_RenderClear(renderer);

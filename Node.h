@@ -36,12 +36,15 @@ public:
     //bool is_head() const;
     Node* get_child(int direction);
     Node* get_parent();
+    int get_liberties();
+    int get_children_size();
 
     void set_index(int i);   
     void set_player(char value);
     void set_visited(bool value);
     void add_child(Node* child, int pos);
     void add_parent(Node* parent);
+    void set_liberties(int l);
 
     // Getter methods for accessing children
     Node* getUpChild() const { return children.up; }
@@ -62,6 +65,7 @@ private:
     Children children;
     bool visited;
     int index;
+    int liberties;
 
 };
 

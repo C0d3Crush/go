@@ -30,6 +30,8 @@ void Board::update()
 {
     update_groups();
     update_liberties();
+    update_heads();
+    update_life();
 }
 
 int Board::get_index(int x, int y) {
@@ -216,6 +218,8 @@ void Board::reset_parent()
 
 void Board::print()
 {   
+    std::cout << "board" << std::endl;
+
     for (int i = 0; i < h; i++)
     {
         for (int j = 0; j < w; j++)
@@ -226,13 +230,15 @@ void Board::print()
         }
         std::cout << std::endl;
     }
+    std::cout << std::endl;
 }
 
 
-std::vector<Node*> Board::print_group()
+void Board::update_heads()
 {
-    std::vector<Node*> heads;
+    //std::string status = "alive";
 
+    heads.resize(0);
     reset_visited();
 
     for(int k = 0; k < nodes.size(); k++ )
@@ -240,36 +246,54 @@ std::vector<Node*> Board::print_group()
         if (!(nodes[k].get_player() == '.') && !(nodes[k].get_visited()))
         {
             bool alive = false;
-            std::vector<int> vect = get_group(k);
-
-            if (vect.size() == 1) 
-            {
-                //continue;
-            }
-
-            std::cout << "Printing " << "(" <<get_x(k)<< "; " << get_y(k) << ")"  << "-tree, colour: " << nodes[k].get_player()<<std::endl;
-
-            heads.push_back(&nodes[k]);
-
+            std::vector<Node*> vect = get_group(&nodes[k]);
+            
             for (int l = 0; l < vect.size(); l++) 
             {
-                std::cout << "(" <<get_x(vect[l])<< "; " << get_y(vect[l]) << ")" << std::endl;
-                int liberties = *get_lib(vect[l]);
-                if (liberties != 0)
+                int liberties = *get_lib(vect[l]->get_index());
+
+                //print_coords(vect[l]);
+                //std::cout << "liberties: "<< liberties << std::endl;
+
+                if (!(liberties != 0))
                 {
-                    alive = true;
+                    //status = "dead";
                 }
             }
-        //std::cout << std::endl;
-        //std::cout << "Alive: "<< alive << std::endl;
-        //std::cout << std::endl;
 
+            heads.push_back(&nodes[k]);
         }
     }
-
-    return heads;
 }
 
+std::vector<Node*> Board::get_group(Node* head)
+{
+    std::vector<Node*> nodes;
+    reset_visited();
+    rec_group(head, &nodes);
+
+    return nodes;
+}
+
+void Board::rec_group(Node *head, std::vector<Node *> *nodes)
+{
+    if (head->get_visited()) return;
+
+    head->set_visited(true);
+
+    nodes->push_back(head);
+
+    for (int i = 0; i < 4; i++)
+    {
+        Node* child = head->get_child(i);
+        if (!(child == nullptr))
+        {
+            rec_group(child, nodes);
+        }
+    }
+}
+
+/*
 std::vector<int> Board::get_group(int index)
 {
     std::vector<int> vect;
@@ -277,17 +301,59 @@ std::vector<int> Board::get_group(int index)
     nodes[index].print_children(vect);
     return vect;
 }
+*/
+
 
 void Board::print_liberties()
 {
+    std::cout << "liberties: " << std::endl;
     for (int i= 0; i < h; i++)
     {
         for (int j = 0; j < w; j++)
         {
             std::cout << liberties[get_index(j, i)];
         }
-    std::cout << std::endl;
+        std::cout << std::endl;
     }
+    std::cout << std::endl;
+
+}
+
+void Board::print_heads()
+{
+    std::cout << "heads:"<<std::endl;
+    for ( auto h : heads) 
+    {
+        int index = h->get_index();
+        std::cout << "(" << get_x(index) << ";" << get_y(index) << ")"<< std::endl;
+    }
+    std::cout << std::endl;
+}
+
+void Board::print_groups()
+{
+    std::cout << "groups:" << std::endl;
+    reset_visited();
+    for(int k = 0; k < nodes.size(); k++ )
+    {
+        if (!(nodes[k].get_player() == '.') && !(nodes[k].get_visited()))
+        {
+            std::vector<Node*> vect = get_group(&nodes[k]);
+
+            std::cout << "Printing " << "(" <<get_x(k)<< "; " << get_y(k) << ")"  << "-tree, colour: " << nodes[k].get_player()<<std::endl;
+
+            for (int l = 0; l < vect.size(); l++) 
+            {
+                std::cout << "(" <<get_x(vect[l]->get_index())<< "; " << get_y(vect[l]->get_index()) << ")" << std::endl;
+            }
+        }
+    }
+}
+
+void Board::print_coords(int index)
+{
+
+    std::cout << "coords: (" << get_x(index) << ";" << get_y(index) << ")" << std::endl; 
 }
 
 void Board::update_groups()
@@ -300,6 +366,8 @@ void Board::update_groups()
             reset_visited();
             dfs(i);
         }
+
+
 }
 
 void Board::update_liberties()
@@ -308,8 +376,49 @@ void Board::update_liberties()
     {
         for (int j = 0; j < w; j++)
         {
+            int liberties = get_liberties(j, i);
             int index = get_index(j, i);
-            liberties[index] = get_liberties(j, i);
+            //liberties[index] = get_liberties(j, i);
+            nodes[index].set_liberties(liberties);
         }
+    }
+}
+
+void Board::update_life()
+{
+    for (auto head : heads)
+    {
+        if (!find_life(head)) remove_stones(head);
+    }
+}
+
+bool Board::find_life(Node *head)
+{
+    if(head->get_liberties() != 0)
+    {
+        return 1;
+    }
+
+    for (int i = 0; i < 4; i++)
+    {
+        Node* child = head->get_child(i);
+        if (!(child == nullptr))
+        {
+            return find_life(child);
+        }
+    }
+
+    return 0;
+    
+}
+
+void Board::remove_stones(Node *head)
+{
+    std::vector<Node*> dead_stones = get_group(head);
+
+    for (int i = 0; i < dead_stones.size(); i++) 
+    {
+        std::cout << "deleting node idx: " << i<< std::endl;
+        nodes[i].set_player('.'); 
     }
 }
