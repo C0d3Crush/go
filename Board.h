@@ -57,6 +57,7 @@ public:
     void reset_visited();
     void reset_children();
     void reset_parent();
+    void reset();
 
     // print
     void update_heads();

@@ -216,6 +216,14 @@ void Board::reset_parent()
     }
 }
 
+void Board::reset()
+{
+    for (int i = 0; i < nodes.size(); i++)
+    {
+        nodes[i].set_player('.');
+    }
+}
+
 void Board::print()
 {   
     std::cout << "board" << std::endl;

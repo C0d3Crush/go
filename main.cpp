@@ -48,7 +48,7 @@ void drawSquare(SDL_Renderer* renderer, int centerX, int centerY, int radius) {
 }
 
 
-void drawStones(SDL_Renderer* renderer, int move_count, Board* board) //const GameData& gameData, int move_count) 
+void drawStones(SDL_Renderer* renderer, Board* board) //const GameData& gameData, int move_count) 
 {
     //const auto& move = gameData.moves;
 
@@ -80,6 +80,7 @@ void drawStones(SDL_Renderer* renderer, int move_count, Board* board) //const Ga
 int main ()
 {
     int cycle = 0;
+    int move_count = 0;
     char player = 'B';
     bool is_running = true;
 
@@ -163,53 +164,71 @@ int main ()
                 switch (e.key.keysym.sym) {
                     case SDLK_LEFT:
                         cycle--;
-                        std::cout << "cycle: " << cycle << std::endl;
                         break;
                     case SDLK_RIGHT:
                         cycle++;
-                        std::cout << "cycle: " << cycle << std::endl;
                         break;
                     case SDLK_BACKSPACE:
                         break;
-                    case SDLK_s:
+                    case SDLK_r:
+                        board.reset();
+                        cycle = 0;
                         break;
                     case SDLK_q:
                         is_running = false;
                         break;
                 }
-                std::cout<< "move: "<< cycle  <<std::endl;
-
             }
         }
-        int x = moves[cycle].first;
-        int y = moves[cycle].second;    
-    
-        if (board.add_move(moves[cycle].first, moves[cycle].second, player)) 
+
+        if (move_count < cycle)
         {
-            std::cerr << "Error: bad move" << std::endl;
+            int x = moves[move_count].first;
+            int y = moves[move_count].second;    
+        
+            if (board.add_move(moves[move_count].first, moves[move_count].second, player)) 
+            {
+                //std::cerr << "Error: bad move" << std::endl;
+            }
+            else
+            {
+                if(player == 'W') player = 'B';
+                else player = 'W';    
+            }
+
+            board.update();     
+            move_count++;
         }
-        else
+        else if (cycle < move_count)
         {
-            if(player == 'W') player = 'B';
-            else player = 'W';    
+            board.reset();
+            player = 'B';
+
+            for (move_count = 0; move_count < cycle; move_count++)
+            {
+                int x = moves[move_count].first;
+                int y = moves[move_count].second;    
+            
+                if (board.add_move(moves[move_count].first, moves[move_count].second, player)) 
+                {
+                    //std::cerr << "Error: bad move" << std::endl;
+                }
+                else
+                {
+                    if(player == 'W') player = 'B';
+                    else player = 'W';    
+                }
+                board.update();     
+            }
         }
 
-        std::cout << "move: ("<< x << "; " << y << ")" << std::endl;
-
-        board.update();     
-
-        board.print();
-        //board.print_liberties();
-        //board.print_groups();
-        //board.print_heads();         
-
-        if (cycle == moves.size()) is_running = false;
+        if (cycle == moves.size()-1) is_running = false;
 
         SDL_SetRenderDrawColor(renderer, 255, 204, 153, 255); 
         SDL_RenderClear(renderer);
 
         drawBoard(renderer, board.size());
-        drawStones(renderer, cycle, &board);
+        drawStones(renderer, &board);
 
         SDL_RenderPresent(renderer);
     }
