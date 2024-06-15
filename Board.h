@@ -14,7 +14,6 @@ private:
     int w, h;
     int s;
     std::vector<Node> nodes;
-    std::vector<int> liberties;
     std::vector<Node*> heads;
 
     float komi; 
@@ -62,7 +61,6 @@ public:
     // print
     void update_heads();
     void print();
-    void print_liberties();
     void print_heads();
     void print_groups();
     void print_coords(int index);

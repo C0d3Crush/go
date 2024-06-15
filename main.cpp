@@ -47,7 +47,6 @@ void drawSquare(SDL_Renderer* renderer, int centerX, int centerY, int radius) {
     SDL_RenderFillRect(renderer, &squareRect);
 }
 
-
 void drawStones(SDL_Renderer* renderer, Board* board) //const GameData& gameData, int move_count) 
 {
     //const auto& move = gameData.moves;
@@ -86,7 +85,7 @@ int main ()
 
     std::vector<Node> nodes;
 
-    Board board(9, nodes);
+    Board board(19, nodes);
         
     std::vector<std::pair<int, int>> moves = {
         {0,0}, {0,1}, 

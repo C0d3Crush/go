@@ -8,7 +8,6 @@ Board::Board(int size, std::vector<Node>& vect) {
 
     nodes = vect;
     nodes.resize(size * size);
-    liberties.resize(size * size);
 
     for (int i = 0; i < size; i++)
     {
@@ -17,8 +16,6 @@ Board::Board(int size, std::vector<Node>& vect) {
             int index = get_index(j, i);
             nodes[index].set_player('.');    
             nodes[index].set_index(index);
-
-            liberties[index] = 0;
         }
     }
 }
@@ -107,12 +104,7 @@ int Board::get_liberties(int x, int y)
         count++;
     }    
     return count;
-}
-
-int *Board::get_lib(int index)
-{
-    return &liberties[index];
-}
+} 
 
 void Board::dfs(const int index)
 {
@@ -244,8 +236,6 @@ void Board::print()
 
 void Board::update_heads()
 {
-    //std::string status = "alive";
-
     heads.resize(0);
     reset_visited();
 
@@ -255,27 +245,20 @@ void Board::update_heads()
         {
             bool alive = false;
             std::vector<Node*> vect = get_group(&nodes[k]);
-            
-            for (int l = 0; l < vect.size(); l++) 
-            {
-                int liberties = *get_lib(vect[l]->get_index());
-
-                //print_coords(vect[l]);
-                //std::cout << "liberties: "<< liberties << std::endl;
-
-                if (!(liberties != 0))
-                {
-                    //status = "dead";
-                }
-            }
-
             heads.push_back(&nodes[k]);
         }
     }
 }
 
-std::vector<Node*> Board::get_group(Node* head)
+/**
+ * Prints all children of a node.
+ *
+ * @param node this will be viewed the head.
+ * @return a vector aof all children an childrens children.
+ */
+std::vector<Node*> Board::get_group(Node* head)   
 {
+
     std::vector<Node*> nodes;
     reset_visited();
     rec_group(head, &nodes);
@@ -301,31 +284,6 @@ void Board::rec_group(Node *head, std::vector<Node *> *nodes)
     }
 }
 
-/*
-std::vector<int> Board::get_group(int index)
-{
-    std::vector<int> vect;
-    vect.push_back(index);
-    nodes[index].print_children(vect);
-    return vect;
-}
-*/
-
-
-void Board::print_liberties()
-{
-    std::cout << "liberties: " << std::endl;
-    for (int i= 0; i < h; i++)
-    {
-        for (int j = 0; j < w; j++)
-        {
-            std::cout << liberties[get_index(j, i)];
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-
-}
 
 void Board::print_heads()
 {
