@@ -39,7 +39,11 @@ public:
     int get_index(int x, int y);
     int get_x(int index);
     int get_y(int index);
+
     int size();
+    int width();
+    int height();
+
     Node* get_node(int index);
     int get_liberties(int x, int y);
     int* get_lib(int index);

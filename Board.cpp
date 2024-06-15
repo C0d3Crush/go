@@ -52,6 +52,15 @@ int Board::size()
     return s;
 }
 
+int Board::width()
+{
+    return w;
+}
+
+int Board::height()
+{
+    return h;
+}
 
 Node *Board::get_node(int index)
 {
@@ -354,7 +363,10 @@ void Board::update_life()
 {
     for (auto head : heads)
     {
-        if (!find_life(head)) remove_stones(head);
+        if (!find_life(head)) 
+        {
+            remove_stones(head);
+        }
     }
 }
 
@@ -384,7 +396,7 @@ void Board::remove_stones(Node *head)
 
     for (int i = 0; i < dead_stones.size(); i++) 
     {
-        std::cout << "deleting node idx: " << i<< std::endl;
-        nodes[i].set_player('.'); 
+        //std::cout << "deleting node idx: " << i<< std::endl;
+        dead_stones[i]->set_player('.'); 
     }
 }
