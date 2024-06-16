@@ -29,6 +29,11 @@ void Node::add_parent(Node *parent)
     this->parent = parent;
 }
 
+void Node::set_liberties(int l)
+{
+    liberties = l;
+}
+
 void Node::print_children(std::vector <int>& vect)
 {
     visited = true;
@@ -101,6 +106,21 @@ Node* Node::get_child(int direction)
 Node *Node::get_parent()
 {
     return parent;
+}
+
+int Node::get_liberties()
+{
+    return liberties;
+}
+
+int Node::get_children_size()
+{
+    int size;
+    for (int i = 0; i < 4; i++)
+    {
+        if (!(get_child(0) == nullptr)) size++;
+    }
+    return size;
 }
 
 // Default constructor

@@ -19,41 +19,26 @@ int main ()
         std::cout << std::endl;
 
         int x = moves[cycle].first;
-        int y = moves[cycle].second;    //making x and y 
+        int y = moves[cycle].second;    
     
-        if (board.add_move(moves[cycle].first, moves[cycle].second, player)) // setting x and y to board and checking legality
-            std::cerr << "Error: bad move" << std::endl;
+        if (board.add_move(moves[cycle].first, moves[cycle].second, player)) std::cerr << "Error: bad move" << std::endl;
 
-        board.update();             // this is doing all the life and death action
+        std::cout << "move: ("<< x << "; " << y << ")" << std::endl;
 
-        //std::cout << "Printing lberties: " << std::endl;    //print liberties
+        board.update();     
+
+        board.print();
         //board.print_liberties();
-        std::cout << std::endl;
+        //board.print_groups();
+        //board.print_heads();  
 
         if(player == 'W') player = 'B';     //change colour for next move/cycle
-        else player = 'W';        
-        
+        else player = 'W';           
+
         cycle++;    // increment game cycle
         if (cycle == moves.size()) is_running = false;
 
-        //std::cout << "groups: " << std::endl;   //print groups that are found in the dfs search, test this profoundly
-        std::vector<Node*> heads = board.print_group();
-
-
-        std::cout << "heads:"<<std::endl;
-        for ( auto h : heads) 
-        {
-            int index = h->get_index();
-            std::cout << "(" << board.get_x(index) << ";" << board.get_y(index) << ")"<< std::endl;
-        }
-        std::cout << std::endl;
-
-        std::cout <<"Board after move: (x: " << x << "; "<< y << ")" << std::endl;  //printing board
-        //board.print();
-        std::cout << std::endl;
-        
-        //int a;
-        //std::cin >>a;
+   
     }
     
     std::cout << "terminated." << std::endl;
