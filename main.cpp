@@ -75,8 +75,10 @@ void drawStones(SDL_Renderer* renderer, Board* board) //const GameData& gameData
         drawSquare(renderer, x, y, radius);
     }
 }
+
 void handleMouseClick(const SDL_Event& e, Board* board, char* player, int* cycle, std::vector<std::pair<int, int>>* moves) 
 {
+    std::cout << ">>===== Handle Mouse =====<<" << std::endl;
     if (e.button.button == SDL_BUTTON_LEFT) 
     {
         // Capture raw mouse coordinates
@@ -110,21 +112,20 @@ void handleMouseClick(const SDL_Event& e, Board* board, char* player, int* cycle
         // Ensure the calculated grid position is within the board limits
         if (gridX >= 0 && gridX < board->size() && gridY >= 0 && gridY < board->size()) 
         {
-            // Toggle the player
-            //*player = ((*player == 'W') ? 'B' : 'W');
+            int index = board->get_index(gridY, gridX);
 
-            moves->push_back({gridY, gridX});
+            std::cout << "index: " <<index << " player at coords: " << board->get_node(index)->get_player() << std::endl;
+            
+            std::cout << "(" << gridX << "; " << gridY << ")" << std::endl;
 
-            //std::cout << "cy: "<< *cycle << std::endl;
+            std::cout << "(" << board->get_x(index) << "; "<< board->get_y(index) << ")"<< std::endl;
 
-            (*cycle)++;
-
-            //std::cout << "cy: "<< *cycle << std::endl;
-
-            // Update the board's visual representation
-            //board->update();
-
-            //std::cout << "Player: " << *player << " X: " << gridX << " Y: " << gridY << std::endl;
+            if (board->get_node(index)->get_player() == '.') 
+            {
+                moves->push_back({gridY, gridX});
+                (*cycle)++;
+            }
+            else std::cout << "Cant place there. Space is ocupied." << std::endl;
         }
         else
         {
@@ -212,8 +213,6 @@ int main ()
                 {
                     handleMouseClick(e, &board, &player, &cycle, &moves);
                     board.update();     
-
-                    //print_array(board, gameData.boardSize);
                 }
                 
             } 
@@ -222,11 +221,9 @@ int main ()
                 switch (e.key.keysym.sym) {
                     case SDLK_LEFT:
                         if (cycle > 0) cycle--;
-                        //cycle--;
                         break;
                     case SDLK_RIGHT:
                         if (cycle < moves.size()) cycle++;
-                        //cycle++;
                         break;
                     case SDLK_BACKSPACE:
                         break;
@@ -241,12 +238,8 @@ int main ()
             }
         }
 
-        //std::cout << "cycle: "<< cycle << "move count: " << move_count  << std::endl;
-
         if (move_count < cycle)
         {
-            //std::cout << "move behind." << std::endl;
-
             int x = moves[move_count].first;
             int y = moves[move_count].second;    
         
@@ -265,8 +258,6 @@ int main ()
         }
         else if (cycle < move_count)
         {
-            //std::cout << "move front." << std::endl;
-
             board.reset();
             player = 'B';
 
@@ -286,10 +277,6 @@ int main ()
                 }
                 board.update();     
             }
-        }
-        else 
-        {
-            //std::cout << "move up to date." << std::endl;
         }
         
         SDL_SetRenderDrawColor(renderer, 255, 204, 153, 255); 
