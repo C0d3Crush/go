@@ -17,6 +17,8 @@ private:
     std::vector<int> liberties;
     std::vector<Node*> heads;
 
+    Node* ko;
+
     float komi; 
     std::string ruleset; 
     std::string result; 
@@ -35,7 +37,7 @@ public:
     void update_life();
 
     bool find_life(Node* head);
-    void remove_stones(Node* head);
+    int remove_stones(Node* head);
 
     int get_index(int x, int y);
     int get_x(int index);

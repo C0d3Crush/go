@@ -244,7 +244,7 @@ void Board::update_heads()
     {
         if (!(nodes[k].get_player() == '.') && !(nodes[k].get_visited()))
         {
-            bool alive = false;
+            //bool alive = false;
             std::vector<Node*> vect = get_group(&nodes[k]);
             
             for (int l = 0; l < vect.size(); l++) 
@@ -387,7 +387,10 @@ void Board::update_life()
 {
     for (auto head : heads)
     {
-        if (!find_life(head)) remove_stones(head);
+        if (!find_life(head)) 
+            {
+                if (remove_stones(head) == 1) ko = head;
+            }
     }
 }
 
@@ -411,7 +414,7 @@ bool Board::find_life(Node *head)
     
 }
 
-void Board::remove_stones(Node *head)
+int Board::remove_stones(Node *head)
 {
     std::vector<Node*> dead_stones = get_group(head);
 
@@ -420,4 +423,6 @@ void Board::remove_stones(Node *head)
         std::cout << "deleting node idx: " << i<< std::endl;
         nodes[i].set_player('.'); 
     }
+
+    return dead_stones.size();
 }
