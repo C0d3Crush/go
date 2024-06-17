@@ -7,74 +7,6 @@ const int WINDOW_WIDTH = 600;
 const int WINDOW_HEIGHT = 600;
 const int BOARD_MARGIN = 30;
 
-void drawBoard(SDL_Renderer* renderer, int size) 
-{
-    int boardSize = sqrt(size);
-    int cellSize = (WINDOW_WIDTH - 2 * BOARD_MARGIN) / (boardSize - 1);
-    
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    
-    for (int i = 0; i < boardSize; ++i) 
-    {
-        SDL_RenderDrawLine
-        (
-            renderer, 
-            BOARD_MARGIN, 
-            BOARD_MARGIN + i * cellSize, 
-            WINDOW_WIDTH - BOARD_MARGIN, 
-            BOARD_MARGIN + i * cellSize
-        );
-        SDL_RenderDrawLine
-        (
-            renderer, 
-            BOARD_MARGIN + i * cellSize, 
-            BOARD_MARGIN, 
-            BOARD_MARGIN + i * cellSize, 
-            WINDOW_HEIGHT - BOARD_MARGIN
-        );
-    }
-}
-
-void drawSquare(SDL_Renderer* renderer, int centerX, int centerY, int radius) {
-    int squareSize = radius * 2; // Square size is double the radius
-
-    // Calculate the coordinates of the square's top-left corner
-    int startX = centerX - (squareSize / 2);
-    int startY = centerY - (squareSize / 2);
-
-    // Draw the square
-    SDL_Rect squareRect = { startX, startY, squareSize, squareSize };
-    SDL_RenderFillRect(renderer, &squareRect);
-}
-
-void drawStones(SDL_Renderer* renderer, Board* board) //const GameData& gameData, int move_count) 
-{
-    //const auto& move = gameData.moves;
-
-    int cellSize = (WINDOW_WIDTH - 2 * BOARD_MARGIN) / (sqrt(board->size()) - 1);
-    int radius = cellSize / 2;
-
-    for (int i = 0; i < board->size(); i++)
-    {
-        Node* node = board->get_node(i);
-
-        if (node->get_player() == '.') continue;
-
-        int x = cellSize * (board->get_x(i)) + BOARD_MARGIN;
-        int y = cellSize * (board->get_y(i)) + BOARD_MARGIN;
-
-        //std::cout<<"test:"<<"x: "<<x<<" y: "<<y<<std::endl;
-        if (board->get_node(i)->get_player() == 'B') 
-        { 
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        } 
-        else 
-        {
-            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        }
-        drawSquare(renderer, x, y, radius);
-    }
-}
 
 void handleMouseClick(const SDL_Event& e, Board* board, char* player, int* cycle, std::vector<std::pair<int, int>>* moves) 
 {
@@ -282,8 +214,7 @@ int main ()
         SDL_SetRenderDrawColor(renderer, 255, 204, 153, 255); 
         SDL_RenderClear(renderer);
 
-        drawBoard(renderer, board.size());
-        drawStones(renderer, &board);
+        board.draw(renderer, WINDOW_WIDTH, BOARD_MARGIN);
 
         SDL_RenderPresent(renderer);
     }

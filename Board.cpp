@@ -23,6 +23,83 @@ Board::Board(int size, std::vector<Node>& vect) {
 // Destructor
 Board::~Board() {}
 
+void Board::draw(SDL_Renderer *renderer, int window_width, int board_margin)
+{
+    drawBoard(renderer, window_width, board_margin);
+    drawStones(renderer, window_width, board_margin);
+}
+
+void Board::drawStones(SDL_Renderer *renderer, int window_width, int board_margin)
+{
+
+    int cellSize = (window_width - 2 * board_margin) / (w - 1);
+    int radius = cellSize / 2;
+
+    for (int i = 0; i < s; i++)
+    {
+        Node* node = get_node(i);
+
+        if (node->get_player() == '.') continue;
+
+        int x = cellSize * (get_x(i)) + board_margin;
+        int y = cellSize * (get_y(i)) + board_margin;
+
+        //std::cout<<"test:"<<"x: "<<x<<" y: "<<y<<std::endl;
+        if (get_node(i)->get_player() == 'B') 
+        { 
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        } 
+        else 
+        {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        }
+        drawSquare(renderer, x, y, radius);
+    }
+}
+
+void Board::drawSquare(SDL_Renderer *renderer, int centerX, int centerY, int radius)
+{
+
+    int squareSize = radius * 2; // Square size is double the radius
+
+    // Calculate the coordinates of the square's top-left corner
+    int startX = centerX - (squareSize / 2);
+    int startY = centerY - (squareSize / 2);
+
+    // Draw the square
+    SDL_Rect squareRect = { startX, startY, squareSize, squareSize };
+    SDL_RenderFillRect(renderer, &squareRect);
+}
+
+void Board::drawBoard(SDL_Renderer *renderer, int window_width, int board_margin)
+{
+    //int boardSize = s;
+
+    int cellSize = (window_width - 2 * board_margin) / (w - 1);
+    
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    
+    for (int i = 0; i < w; ++i) 
+    {
+        SDL_RenderDrawLine
+        (
+            renderer, 
+            board_margin, 
+            board_margin + i * cellSize, 
+            window_width - board_margin, 
+            board_margin + i * cellSize
+        );
+        SDL_RenderDrawLine
+        (
+            renderer, 
+            board_margin + i * cellSize, 
+            board_margin, 
+            board_margin + i * cellSize, 
+            window_width - board_margin
+        );
+    }
+}
+
 void Board::update()
 {
     update_groups();

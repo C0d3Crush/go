@@ -7,6 +7,8 @@
 #include <fstream>
 #include <utility>
 
+#include <SDL2/SDL.h>
+
 #include "Node.h"
 
 class Board {
@@ -26,7 +28,10 @@ public:
     Board(int size, std::vector<Node>& vect);
     ~Board();
 
-    // we need a draw function in the future here!
+    void draw(SDL_Renderer *renderer, int window_width, int board_margin);
+    void drawStones(SDL_Renderer* renderer, int window_width, int board_margin); //const GameData& gameData, int move_count) 
+    void drawSquare(SDL_Renderer* renderer, int centerX, int centerY, int radius);
+    void drawBoard(SDL_Renderer* renderer, int window_width, int board_margin);
 
     void update();
     void update_groups();
