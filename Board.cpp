@@ -418,8 +418,9 @@ void Board::remove_stones(Node *head)
 
     for (int i = 0; i < dead_stones.size(); i++) 
     {
-        std::cout << "deleting node idx: " << i<< std::endl;
-        nodes[i].set_player('.'); 
+        int index = dead_stones[i]->get_index();
+        std::cout << "deleting node idx: " << index << std::endl;
+        dead_stones[i]->set_player('.'); 
     }
 }
 
