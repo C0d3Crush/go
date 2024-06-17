@@ -28,10 +28,11 @@ Board::~Board() {}
 
 void Board::update()
 {
-    update_groups();
-    update_liberties();
-    update_heads();
+    update_groups();        
+    update_liberties();        
+    update_heads();        
     update_life();
+
 }
 
 int Board::get_index(int x, int y) {
@@ -113,7 +114,7 @@ int *Board::get_lib(int index)
     return &liberties[index];
 }
 
-void Board::dfs(const int index)
+void Board::build_dfs(const int index)
 {
 
     if (get_node(index)->get_player() == '.') return;
@@ -138,7 +139,7 @@ void Board::dfs(const int index)
         {
             node->add_child(node_up, 0);
             node_up->add_parent(node);
-            dfs(index_up);
+            build_dfs(index_up);
         }
     }
 
@@ -153,7 +154,7 @@ void Board::dfs(const int index)
         {
             node->add_child(node_down, 2);
             node_down->add_parent(node);
-            dfs(index_down);
+            build_dfs(index_down);
         }
     }
 
@@ -168,7 +169,7 @@ void Board::dfs(const int index)
         {
             node->add_child(node_left, 3);
             node_left->add_parent(node);
-            dfs(index_left);
+            build_dfs(index_left);
         }
     }
 
@@ -183,9 +184,28 @@ void Board::dfs(const int index)
         {
             node->add_child(node_right, 1);
             node_right->add_parent(node);
-            dfs(index_right);
+            build_dfs(index_right);
         }
     }
+}
+
+bool Board::dfs_life(Node *head)
+{
+    
+    if(head->get_liberties() != 0)
+    {
+        return 1;
+    }
+    for (int i = 0; i < 4; i++)
+    {
+        Node* child = head->get_child(i);
+        if (!(child == nullptr))
+        {
+            return find_life(child);
+        }
+    }
+
+    return 0;
 }
 
 void Board::reset_visited()
@@ -247,19 +267,6 @@ void Board::update_heads()
         {
             bool alive = false;
             std::vector<Node*> vect = get_group(&nodes[k]);
-            
-            for (int l = 0; l < vect.size(); l++) 
-            {
-                int liberties = *get_lib(vect[l]->get_index());
-
-                //print_coords(vect[l]);
-                //std::cout << "liberties: "<< liberties << std::endl;
-
-                if (!(liberties != 0))
-                {
-                    //status = "dead";
-                }
-            }
 
             heads.push_back(&nodes[k]);
         }
@@ -269,13 +276,15 @@ void Board::update_heads()
 std::vector<Node*> Board::get_group(Node* head)
 {
     std::vector<Node*> nodes;
+
     reset_visited();
-    rec_group(head, &nodes);
+
+    dfs_group(head, &nodes);
 
     return nodes;
 }
 
-void Board::rec_group(Node *head, std::vector<Node *> *nodes)
+void Board::dfs_group(Node *head, std::vector<Node *> *nodes)
 {
     if (head->get_visited()) return;
 
@@ -288,21 +297,10 @@ void Board::rec_group(Node *head, std::vector<Node *> *nodes)
         Node* child = head->get_child(i);
         if (!(child == nullptr))
         {
-            rec_group(child, nodes);
+            dfs_group(child, nodes);
         }
     }
 }
-
-/*
-std::vector<int> Board::get_group(int index)
-{
-    std::vector<int> vect;
-    vect.push_back(index);
-    nodes[index].print_children(vect);
-    return vect;
-}
-*/
-
 
 void Board::print_liberties()
 {
@@ -364,7 +362,7 @@ void Board::update_groups()
         for (int i = 0; i < nodes.size(); i++)
         {
             reset_visited();
-            dfs(i);
+            build_dfs(i);
         }
 
 
@@ -378,7 +376,6 @@ void Board::update_liberties()
         {
             int liberties = get_liberties(j, i);
             int index = get_index(j, i);
-            //liberties[index] = get_liberties(j, i);
             nodes[index].set_liberties(liberties);
         }
     }
@@ -386,30 +383,25 @@ void Board::update_liberties()
 
 void Board::update_life()
 {
+    std::cout << heads.size()<< std::endl;
+    int i = 0;
     for (auto head : heads)
     {
+        i++;
+        std::cout << i<< "   "<<head->get_index() << "   " << !find_life(head) <<std::endl;
         if (!find_life(head)) remove_stones(head);
     }
 }
 
 bool Board::find_life(Node *head)
 {
-    if(head->get_liberties() != 0)
-    {
-        return 1;
-    }
-
-    for (int i = 0; i < 4; i++)
-    {
-        Node* child = head->get_child(i);
-        if (!(child == nullptr))
-        {
-            return find_life(child);
-        }
-    }
-
-    return 0;
+    if (head->get_visited()) return head->get_liberties();
     
+    bool value = dfs_life(head);
+
+    reset_visited();
+
+    return value;
 }
 
 void Board::remove_stones(Node *head)

@@ -23,6 +23,14 @@ private:
     std::string black_player;
     std::string white_player; 
 
+    // reset
+    void reset_visited();
+    void reset_children();
+    void reset_parent();
+
+    int get_index(int x, int y);
+    int get_x(int index);
+    int get_y(int index);
 public:
     Board(int size, std::vector<Node>& vect);
     ~Board();
@@ -33,35 +41,24 @@ public:
     void update_groups();
     void update_liberties();
     void update_life();
+    void update_heads();
 
-    bool find_life(Node* head);
-    void remove_stones(Node* head);
-
-    int get_index(int x, int y);
-    int get_x(int index);
-    int get_y(int index);
-    //int size();
     Node* get_node(int index);
     int get_liberties(int x, int y);
     int* get_lib(int index);
 
-    std::vector<Node*> get_group(Node* head);  // this one is aperently super epic!
-    void rec_group(Node* head, std::vector<Node*> *nodes);
-
-
     int add_move(int x, int y, char player);
-
-    bool check_life(int i);
     
-    void dfs(int index);
+    void build_dfs(int index);
 
-    // reset
-    void reset_visited();
-    void reset_children();
-    void reset_parent();
+    bool dfs_life(Node* head);
+    void dfs_group(Node* head, std::vector<Node*> *nodes);
+
+    std::vector<Node*> get_group(Node* head); 
+    bool find_life(Node* head);
+    void remove_stones(Node* head);
 
     // print
-    void update_heads();
     void print();
     void print_liberties();
 
