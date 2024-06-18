@@ -13,9 +13,21 @@ class Board {
 private:
     int w, h;
     int s;
+
+    int cycle = 0;
+    int move_count = 0;
+
+    char player = 'B';
+
+
     std::vector<Node> nodes;
     std::vector<int> liberties;
     std::vector<Node*> heads;
+
+    std::vector<std::pair<int, int>> moves;
+
+
+    Node* ko;
 
     float komi; 
     std::string ruleset; 
@@ -27,25 +39,39 @@ private:
     void reset_visited();
     void reset_children();
     void reset_parent();
+    void reset();
 
     int get_index(int x, int y);
     int get_x(int index);
     int get_y(int index);
 public:
-    Board(int size, std::vector<Node>& vect);
+    Board(int size, std::vector<Node>& vect, const std::string file_path, int c);
     ~Board();
 
     // we need a draw function in the future here!
 
-    void update();
+    void update(char player);
     void update_groups();
     void update_liberties();
-    void update_life();
+    void update_life(char player);
     void update_heads();
+
+    bool update_move();
+
+    bool find_life(Node* head);
+    int remove_stones(Node* head);
+
+    int size();
+    int width();
+    int height();
 
     Node* get_node(int index);
     int get_liberties(int x, int y);
-    int* get_lib(int index);
+    int get_lib_amount(int index);
+
+    std::vector<Node*> get_group(Node* head);  // this one is aperently super epic!
+    //void rec_group(Node* head, std::vector<Node*> *nodes);
+
 
     int add_move(int x, int y, char player);
     
@@ -53,10 +79,6 @@ public:
 
     bool dfs_life(Node* head);
     void dfs_group(Node* head, std::vector<Node*> *nodes);
-
-    std::vector<Node*> get_group(Node* head); 
-    bool find_life(Node* head);
-    void remove_stones(Node* head);
 
     // print
     void print();
