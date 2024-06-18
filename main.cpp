@@ -137,7 +137,7 @@ int main ()
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) 
             {
-                is_running = true;
+                is_running = false;
             }
             else if (e.type == SDL_MOUSEBUTTONDOWN) 
             {
