@@ -388,10 +388,10 @@ void Board::update_liberties()
     {
         for (int j = 0; j < w; j++)
         {
-            int liberties = get_liberties(j, i);
+            int l = get_liberties(j, i);
             int index = get_index(j, i);
-            //liberties[index] = get_liberties(j, i);
-            nodes[index].set_liberties(liberties);
+            liberties[index] = l;
+            nodes[index].set_liberties(l);
         }
     }
 }
