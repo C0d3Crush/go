@@ -1,10 +1,55 @@
 #include "Board.h"
 
 // Constructor
-Board::Board(int size, std::vector<Node>& vect) {
+Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int c) 
+{
     this->w = size;
     this->h = size;
     this->s = size * size;
+
+    cycle = c;
+    player = 'B';
+    //moves = parseSGF(file_path);
+
+    if (cycle == -1) cycle = moves.size();
+
+    nodes = vect;
+    nodes.resize(size * size);
+    liberties.resize(size * size);
+
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = 0; j < size; j++) 
+        {
+            int index = get_index(j, i);
+            nodes[index].set_player('.');    
+            nodes[index].set_index(index);
+        }
+    }
+}
+
+Board::Board(int size, std::vector<Node>& vect, int c) 
+{
+    this->w = size;
+    this->h = size;
+    this->s = size * size;
+
+    cycle = c;
+    player = 'B';
+    moves = {
+        {0,0}, {0,1}, 
+        {1,0}, {4,4}, 
+        {2,0}, {4,5}, 
+        {3,4}, {2,4}, 
+        {1,4}, {0,4}, 
+        {0,3}, {0,2}, 
+        {0,8}, {3,0},
+        {1,8}, {2,1},
+        {2,8}, {1,1},
+        {4,8}, {8,1}
+    };
+
+    if (cycle == -1) cycle = moves.size();
 
     nodes = vect;
     nodes.resize(size * size);
@@ -51,13 +96,13 @@ int Board::get_index(int x, int y) {
 
 int Board::get_x(int index)
 {
-    return index / w;
+    return index % w;
 }
 
 
 int Board::get_y(int index)
 {
-    return index % h;
+    return index / h;
 }
 
 
@@ -134,7 +179,7 @@ int Board::get_lib_amount(int index)
     return liberties[index];
 }
 
-void Board::dfs(const int index)
+void Board::build_dfs(const int index)
 {
 
     if (get_node(index)->get_player() == '.') return;
@@ -149,7 +194,7 @@ void Board::dfs(const int index)
     // check seperaly for out of bounds
     
     //up
-    if (y > 0) 
+    if (y >= 0) 
     {
         Node* node_up;
         int index_up = index - w;
@@ -159,7 +204,7 @@ void Board::dfs(const int index)
         {
             node->add_child(node_up, 0);
             node_up->add_parent(node);
-            dfs(index_up);
+            build_dfs(index_up);
         }
     }
 
@@ -174,12 +219,12 @@ void Board::dfs(const int index)
         {
             node->add_child(node_down, 2);
             node_down->add_parent(node);
-            dfs(index_down);
+            build_dfs(index_down);
         }
     }
 
     //Left 
-    if (x > 0)
+    if (x >= 0)
     {
         Node* node_left;
         int index_left = index - 1;
@@ -189,7 +234,7 @@ void Board::dfs(const int index)
         {
             node->add_child(node_left, 3);
             node_left->add_parent(node);
-            dfs(index_left);
+            build_dfs(index_left);
         }
     }
 
@@ -204,9 +249,28 @@ void Board::dfs(const int index)
         {
             node->add_child(node_right, 1);
             node_right->add_parent(node);
-            dfs(index_right);
+            build_dfs(index_right);
         }
     }
+}
+
+bool Board::dfs_life(Node *head)
+{
+    
+    if(head->get_liberties() != 0)
+    {
+        return 1;
+    }
+    for (int i = 0; i < 4; i++)
+    {
+        Node* child = head->get_child(i);
+        if (!(child == nullptr))
+        {
+            return find_life(child);
+        }
+    }
+
+    return 0;
 }
 
 void Board::reset_visited()
@@ -250,6 +314,7 @@ void Board::print()
 
     for (int i = 0; i < h; i++)
     {
+        std::cout<<i;
         for (int j = 0; j < w; j++)
         {
             char player = nodes[get_index(j ,i)].get_player();
@@ -298,6 +363,57 @@ void Board::update_heads()
     }
 }
 
+bool Board::update_move()
+{    
+    if (move_count < cycle)
+        {
+            int x = moves[move_count].first;
+            int y = moves[move_count].second;    
+        
+            if (add_move(moves[move_count].first, moves[move_count].second, player)) 
+            {
+                //std::cerr << "Error: bad move" << std::endl;
+            }
+            else
+            {
+                if(player == 'W') player = 'B';
+                else player = 'W';    
+            }
+
+            update(player);     
+            move_count++;
+            return true;
+        }
+        else if (cycle < move_count)
+        {
+            reset();
+            player = 'B';
+
+            for (move_count = 0; move_count < cycle; move_count++)
+            {
+                int x = moves[move_count].first;
+                int y = moves[move_count].second;    
+            
+                if (add_move(moves[move_count].first, moves[move_count].second, player)) 
+                {
+                    std::cerr << "Error: bad move" << std::endl;
+                }
+                else
+                {
+                    if(player == 'W') player = 'B';
+                    else player = 'W';    
+                }
+                update(player);     
+            }
+            return true;
+        }
+        if (cycle == move_count)
+        {
+            print();
+            return false;
+        } 
+}
+
 /**
  * Prints all children of a node.
  *
@@ -308,13 +424,15 @@ std::vector<Node*> Board::get_group(Node* head)
 {
 
     std::vector<Node*> nodes;
+
     reset_visited();
-    rec_group(head, &nodes);
+
+    dfs_group(head, &nodes);
 
     return nodes;
 }
 
-void Board::rec_group(Node *head, std::vector<Node *> *nodes)
+void Board::dfs_group(Node *head, std::vector<Node *> *nodes)
 {
     if (head->get_visited()) return;
 
@@ -327,7 +445,7 @@ void Board::rec_group(Node *head, std::vector<Node *> *nodes)
         Node* child = head->get_child(i);
         if (!(child == nullptr))
         {
-            rec_group(child, nodes);
+            dfs_group(child, nodes);
         }
     }
 }
@@ -378,7 +496,7 @@ void Board::update_groups()
         for (int i = 0; i < nodes.size(); i++)
         {
             reset_visited();
-            dfs(i);
+            build_dfs(i);
         }
 
 
@@ -402,6 +520,7 @@ void Board::update_liberties()
 
 void Board::update_life(char player)
 {
+    int i = 0;
     for (auto head : heads)
     {
 
@@ -428,22 +547,13 @@ void Board::update_life(char player)
 
 bool Board::find_life(Node *head)
 {
-    if(head->get_liberties() != 0)
-    {
-        return 1;
-    }
-
-    for (int i = 0; i < 4; i++)
-    {
-        Node* child = head->get_child(i);
-        if (!(child == nullptr))
-        {
-            return find_life(child);
-        }
-    }
-
-    return 0;
+    if (head->get_visited()) return head->get_liberties();
     
+    bool value = dfs_life(head);
+
+    reset_visited();
+
+    return value;
 }
 
 int Board::remove_stones(Node *head)
