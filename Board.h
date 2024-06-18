@@ -42,10 +42,14 @@ public:
     int get_index(int x, int y);
     int get_x(int index);
     int get_y(int index);
-    //int size();
+
+    int size();
+    int width();
+    int height();
+
     Node* get_node(int index);
     int get_liberties(int x, int y);
-    int* get_lib(int index);
+    int get_lib_amount(int index);
 
     std::vector<Node*> get_group(Node* head);  // this one is aperently super epic!
     void rec_group(Node* head, std::vector<Node*> *nodes);
@@ -59,6 +63,7 @@ public:
     void reset_visited();
     void reset_children();
     void reset_parent();
+    void reset();
 
     // print
     void update_heads();
