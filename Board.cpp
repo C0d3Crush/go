@@ -11,6 +11,9 @@ Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int
     player = 'B';
     moves = parseSGF(file_path);
 
+    if (moves.size() == 0) return;
+    // TODO: maybe catch errors of empty moves here?
+
     if (cycle == -1) cycle = moves.size();
 
     nodes = vect;
