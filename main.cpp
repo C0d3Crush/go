@@ -25,13 +25,13 @@ int main (int argc, char** argv)
         {4,8}, {8,1}
     };
 
-    if (argc == 0)
-    {
-        cycle = moves.size();
-    }
-    else if (argc == 1)
+    if (argc == 2)
     {
         cycle = atoi(argv[1]);
+    }
+    else
+    {
+        cycle = moves.size();
     }
 
     std::cout<< "checkout move: "<< cycle << std::endl;        
@@ -78,11 +78,11 @@ int main (int argc, char** argv)
                 board.update(player);     
             }
         }
-
-        //board.print();
-        //board.print_liberties();
-        //board.print_groups();
-        //board.print_heads();  
+        if (cycle == move_count)
+        {
+            board.print();
+            is_running = false;
+        } 
     }
     
     std::cout << "terminated." << std::endl;

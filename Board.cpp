@@ -8,6 +8,7 @@ Board::Board(int size, std::vector<Node>& vect) {
 
     nodes = vect;
     nodes.resize(size * size);
+    liberties.resize(size * size);
 
     for (int i = 0; i < size; i++)
     {
@@ -274,6 +275,10 @@ void Board::update_heads()
         {
             //bool alive = false;
             std::vector<Node*> vect = get_group(&nodes[k]);
+
+
+
+            
             
             for (int l = 0; l < vect.size(); l++) 
             {
@@ -387,24 +392,12 @@ void Board::update_liberties()
         {
             int l = get_liberties(j, i);
             int index = get_index(j, i);
-            liberties[index] = l;
+            liberties[index]  = l;
             nodes[index].set_liberties(l);
         }
     }
 }
 
-/*
-void Board::update_life()
-{
-    for (auto head : heads)
-    {
-        if (!find_life(head) && head->get_player() == player)) 
-        {
-            remove_stones(head);
-        }
-    }
-}
-*/
 
 
 void Board::update_life(char player)
@@ -413,13 +406,13 @@ void Board::update_life(char player)
     {
 
         std::vector<Node*> group = get_group(head);
-        std::vector<int> liberties;
+        std::vector<int> liberties_update;
 
         bool life = false;
 
         for (auto e : group)
         {
-            liberties.push_back(e->get_liberties());
+            liberties_update.push_back(e->get_liberties());
         }
 
         for (auto e : liberties)
