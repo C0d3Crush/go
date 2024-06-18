@@ -35,7 +35,7 @@ int main ()
 
         std::cout << "move: ("<< x << "; " << y << ")" << std::endl;
 
-        board.update();     
+        board.update(player);     
 
         board.print();
         //board.print_liberties();

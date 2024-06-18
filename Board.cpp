@@ -26,12 +26,25 @@ Board::Board(int size, std::vector<Node>& vect) {
 // Destructor
 Board::~Board() {}
 
-void Board::update()
+void Board::update(char player)
 {
     update_groups();
     update_liberties();
     update_heads();
-    update_life();
+
+    if (player == 'W') {player = 'B';}
+    else {player = 'W';}
+
+    update_life(player);
+
+    if (player == 'W') {player = 'B';}
+    else {player = 'W';}
+
+    update_groups();
+    update_liberties();
+    update_heads();
+
+    update_life (player);
 }
 
 int Board::get_index(int x, int y) {
@@ -383,11 +396,11 @@ void Board::update_liberties()
     }
 }
 
-void Board::update_life()
+void Board::update_life(char player)
 {
     for (auto head : heads)
     {
-        if (!find_life(head)) 
+        if (!find_life(head) && head->get_player() == player) 
             {
                 if (remove_stones(head) == 1) ko = head;
             }

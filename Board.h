@@ -31,10 +31,10 @@ public:
 
     // we need a draw function in the future here!
 
-    void update();
+    void update(char player);
     void update_groups();
     void update_liberties();
-    void update_life();
+    void update_life(char player);
 
     bool find_life(Node* head);
     int remove_stones(Node* head);
