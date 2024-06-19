@@ -1,10 +1,44 @@
 #include "Board.h"
 
 // Constructor
-Board::Board(int size, std::vector<Node>& vect) {
+Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int c) 
+{
     this->w = size;
     this->h = size;
     this->s = size * size;
+
+    cycle = c;
+    player = 'B';
+    //moves = parseSGF(file_path);
+
+    if (cycle == -1) cycle = moves.size();
+
+    nodes = vect;
+    nodes.resize(size * size);
+
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = 0; j < size; j++) 
+        {
+            int index = get_index(j, i);
+            nodes[index].set_player('.');    
+            nodes[index].set_index(index);
+        }
+    }
+}
+
+
+Board::Board(int size, std::vector<Node>& vect, int c)
+{
+    this->w = size;
+    this->h = size;
+    this->s = size * size;
+
+    cycle = c;
+    player = 'B';
+    moves = {{5,5}};
+
+    if (cycle == -1) cycle = moves.size();
 
     nodes = vect;
     nodes.resize(size * size);
@@ -100,12 +134,25 @@ void Board::drawBoard(SDL_Renderer *renderer, int window_width, int board_margin
     }
 }
 
-void Board::update()
+void Board::update(char player)
 {
     update_groups();
     update_liberties();
     update_heads();
-    update_life();
+
+    if (player == 'W') {player = 'B';}
+    else {player = 'W';}
+
+    update_life(player);
+
+    if (player == 'W') {player = 'B';}
+    else {player = 'W';}
+
+    update_groups();
+    update_liberties();
+    update_heads();
+
+    update_life (player);
 }
 
 int Board::get_index(int x, int y) {
@@ -114,13 +161,13 @@ int Board::get_index(int x, int y) {
 
 int Board::get_x(int index)
 {
-    return index / w;
+    return index % w;
 }
 
 
 int Board::get_y(int index)
 {
-    return index % h;
+    return index / h;
 }
 
 
@@ -190,9 +237,14 @@ int Board::get_liberties(int x, int y)
         count++;
     }    
     return count;
-} 
+}
 
-void Board::dfs(const int index)
+int Board::get_moves_size()
+{
+    return moves.size();
+}
+
+void Board::build_dfs(const int index)
 {
 
     if (get_node(index)->get_player() == '.') return;
@@ -207,7 +259,7 @@ void Board::dfs(const int index)
     // check seperaly for out of bounds
     
     //up
-    if (y > 0) 
+    if (y >= 0) 
     {
         Node* node_up;
         int index_up = index - w;
@@ -217,7 +269,7 @@ void Board::dfs(const int index)
         {
             node->add_child(node_up, 0);
             node_up->add_parent(node);
-            dfs(index_up);
+            build_dfs(index_up);
         }
     }
 
@@ -232,12 +284,12 @@ void Board::dfs(const int index)
         {
             node->add_child(node_down, 2);
             node_down->add_parent(node);
-            dfs(index_down);
+            build_dfs(index_down);
         }
     }
 
     //Left 
-    if (x > 0)
+    if (x >= 0)
     {
         Node* node_left;
         int index_left = index - 1;
@@ -247,7 +299,7 @@ void Board::dfs(const int index)
         {
             node->add_child(node_left, 3);
             node_left->add_parent(node);
-            dfs(index_left);
+            build_dfs(index_left);
         }
     }
 
@@ -262,9 +314,28 @@ void Board::dfs(const int index)
         {
             node->add_child(node_right, 1);
             node_right->add_parent(node);
-            dfs(index_right);
+            build_dfs(index_right);
         }
     }
+}
+
+bool Board::dfs_life(Node *head)
+{
+    
+    if(head->get_liberties() != 0)
+    {
+        return 1;
+    }
+    for (int i = 0; i < 4; i++)
+    {
+        Node* child = head->get_child(i);
+        if (!(child == nullptr))
+        {
+            return find_life(child);
+        }
+    }
+
+    return 0;
 }
 
 void Board::reset_visited()
@@ -308,6 +379,7 @@ void Board::print()
 
     for (int i = 0; i < h; i++)
     {
+        std::cout<<i;
         for (int j = 0; j < w; j++)
         {
             char player = nodes[get_index(j ,i)].get_player();
@@ -329,11 +401,62 @@ void Board::update_heads()
     {
         if (!(nodes[k].get_player() == '.') && !(nodes[k].get_visited()))
         {
-            bool alive = false;
+            //bool alive = false;
             std::vector<Node*> vect = get_group(&nodes[k]);
             heads.push_back(&nodes[k]);
         }
     }
+}
+
+bool Board::update_move()
+{    
+    if (move_count < cycle)
+        {
+            int x = moves[move_count].first;
+            int y = moves[move_count].second;    
+        
+            if (add_move(moves[move_count].first, moves[move_count].second, player)) 
+            {
+                //std::cerr << "Error: bad move" << std::endl;
+            }
+            else
+            {
+                if(player == 'W') player = 'B';
+                else player = 'W';    
+            }
+
+            update(player);     
+            move_count++;
+            return true;
+        }
+        else if (cycle < move_count)
+        {
+            reset();
+            player = 'B';
+
+            for (move_count = 0; move_count < cycle; move_count++)
+            {
+                int x = moves[move_count].first;
+                int y = moves[move_count].second;    
+            
+                if (add_move(moves[move_count].first, moves[move_count].second, player)) 
+                {
+                    std::cerr << "Error: bad move" << std::endl;
+                }
+                else
+                {
+                    if(player == 'W') player = 'B';
+                    else player = 'W';    
+                }
+                update(player);     
+            }
+            return true;
+        }
+        if (cycle == move_count)
+        {
+            print();
+            return false;
+        } 
 }
 
 /**
@@ -342,17 +465,19 @@ void Board::update_heads()
  * @param node this will be viewed the head.
  * @return a vector aof all children an childrens children.
  */
-std::vector<Node*> Board::get_group(Node* head)   
+std::vector<Node*> Board::get_group(Node* head)
 {
 
     std::vector<Node*> nodes;
+
     reset_visited();
-    rec_group(head, &nodes);
+
+    dfs_group(head, &nodes);
 
     return nodes;
 }
 
-void Board::rec_group(Node *head, std::vector<Node *> *nodes)
+void Board::dfs_group(Node *head, std::vector<Node *> *nodes)
 {
     if (head->get_visited()) return;
 
@@ -365,7 +490,7 @@ void Board::rec_group(Node *head, std::vector<Node *> *nodes)
         Node* child = head->get_child(i);
         if (!(child == nullptr))
         {
-            rec_group(child, nodes);
+            dfs_group(child, nodes);
         }
     }
 }
@@ -416,7 +541,7 @@ void Board::update_groups()
         for (int i = 0; i < nodes.size(); i++)
         {
             reset_visited();
-            dfs(i);
+            build_dfs(i);
         }
 
 
@@ -428,28 +553,14 @@ void Board::update_liberties()
     {
         for (int j = 0; j < w; j++)
         {
-            int liberties = get_liberties(j, i);
+            int l = get_liberties(j, i);
             int index = get_index(j, i);
-            //liberties[index] = get_liberties(j, i);
-            nodes[index].set_liberties(liberties);
+            nodes[index].set_liberties(l);
         }
     }
 }
 
-/*
-void Board::update_life()
-{
-    for (auto head : heads)
-    {
-        if (!find_life(head)) 
-        {
-            remove_stones(head);
-        }
-    }
-}
-*/
-
-void Board::update_life()
+void Board::update_life(char player)
 {
     for (auto head : heads)
     {
@@ -471,31 +582,22 @@ void Board::update_life()
             else life = true;
         }
 
-        if (!life) remove_stones(head); 
+        if (!life && head->get_player() == player) remove_stones(head); 
     }
 }
 
 bool Board::find_life(Node *head)
 {
-    if(head->get_liberties() != 0)
-    {
-        return 1;
-    }
-
-    for (int i = 0; i < 4; i++)
-    {
-        Node* child = head->get_child(i);
-        if (!(child == nullptr))
-        {
-            return find_life(child);
-        }
-    }
-
-    return 0;
+    if (head->get_visited()) return head->get_liberties();
     
+    bool value = dfs_life(head);
+
+    reset_visited();
+
+    return value;
 }
 
-void Board::remove_stones(Node *head)
+int Board::remove_stones(Node *head)
 {
     std::vector<Node*> dead_stones = get_group(head);
 
@@ -504,4 +606,6 @@ void Board::remove_stones(Node *head)
         //std::cout << "deleting node idx: " << i<< std::endl;
         dead_stones[i]->set_player('.'); 
     }
+
+    return dead_stones.size();
 }

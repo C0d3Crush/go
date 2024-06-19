@@ -66,32 +66,21 @@ void handleMouseClick(const SDL_Event& e, Board* board, char* player, int* cycle
     }
 }
 
-int main ()
+int main (int argc, char** argv)
 {
-    int cycle = 0;
+    int cycle = -1;
     int move_count = 0;
     char player = 'B';
     bool is_running = true;
 
     std::vector<Node> nodes;
 
-    Board board(9, nodes);
+    if (argc == 2)
+    {
+        cycle = atoi(argv[1]);
+    }
 
-        
-    std::vector<std::pair<int, int>> moves = {
-        {0,0}, {0,1}, 
-        {1,0}, {4,4}, 
-        {2,0}, {4,5}, 
-        {3,4}, {2,4}, 
-        {1,4}, {0,4}, 
-        {0,3}, {0,2}, 
-        {0,8}, {3,0},
-        {1,8}, {2,1},
-        {2,8}, {1,1},
-        {4,8}, {8,1}
-    };
-
-    cycle = moves.size();
+    Board board(9, nodes, cycle);
 
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) 
@@ -141,11 +130,13 @@ int main ()
             }
             else if (e.type == SDL_MOUSEBUTTONDOWN) 
             {
+                /*
                 if(move_count == moves.size())
                 {
                     handleMouseClick(e, &board, &player, &cycle, &moves);
-                    board.update();     
+                    board.update(player);     
                 }
+                */
                 
             } 
             else if (e.type == SDL_KEYDOWN) 
@@ -155,13 +146,13 @@ int main ()
                         if (cycle > 0) cycle--;
                         break;
                     case SDLK_RIGHT:
-                        if (cycle < moves.size()) cycle++;
+                        if (cycle < board.get_moves_size()) cycle++;
                         break;
                     case SDLK_BACKSPACE:
                         break;
                     case SDLK_r:
-                        board.reset();
-                        cycle = 0;
+                        //board.reset();
+                        //cycle = 0;
                         break;
                     case SDLK_q:
                         is_running = false;
@@ -170,46 +161,9 @@ int main ()
             }
         }
 
-        if (move_count < cycle)
-        {
-            int x = moves[move_count].first;
-            int y = moves[move_count].second;    
-        
-            if (board.add_move(moves[move_count].first, moves[move_count].second, player)) 
-            {
-                //std::cerr << "Error: bad move" << std::endl;
-            }
-            else
-            {
-                if(player == 'W') player = 'B';
-                else player = 'W';    
-            }
-
-            board.update();     
-            move_count++;
-        }
-        else if (cycle < move_count)
-        {
-            board.reset();
-            player = 'B';
-
-            for (move_count = 0; move_count < cycle; move_count++)
-            {
-                int x = moves[move_count].first;
-                int y = moves[move_count].second;    
-            
-                if (board.add_move(moves[move_count].first, moves[move_count].second, player)) 
-                {
-                    std::cerr << "Error: bad move" << std::endl;
-                }
-                else
-                {
-                    if(player == 'W') player = 'B';
-                    else player = 'W';    
-                }
-                board.update();     
-            }
-        }
+        std::cout << "move" << std::endl;
+        board.update_move();
+        std::cout << "draw" << std::endl;
         
         SDL_SetRenderDrawColor(renderer, 255, 204, 153, 255); 
         SDL_RenderClear(renderer);
