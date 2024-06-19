@@ -14,7 +14,8 @@ int main (int argc, char** argv)
         cycle = atoi(argv[1]);
     }
 
-    Board board(9, nodes, &cycle);
+    std::string file_path = "../data/sample.sgf";
+    Board board(9,nodes, file_path, &cycle);
 
     while(is_running)
     {
