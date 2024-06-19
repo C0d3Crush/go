@@ -14,11 +14,11 @@ int main (int argc, char** argv)
         cycle = atoi(argv[1]);
     }
 
-    Board board(9, nodes, cycle);
+    Board board(9, nodes, &cycle);
 
-    while(board.update_move())
+    while(board.update_cycle())
     {
-        
+        board.print();
     }
     
     std::cout << "terminated." << std::endl;

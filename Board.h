@@ -14,7 +14,7 @@ private:
     int w, h;
     int s;
 
-    int cycle = 0;
+    int* cycle;
     int move_count = 0;
 
     char player = 'B';
@@ -45,8 +45,8 @@ private:
     int get_x(int index);
     int get_y(int index);
 public:
-    Board(int size, std::vector<Node>& vect, const std::string file_path, int c);
-    Board(int size, std::vector<Node>& vect, int c);
+    Board(int size, std::vector<Node>& vect, const std::string file_path, int* c);
+    Board(int size, std::vector<Node>& vect, int* c);
 
     ~Board();
 
@@ -58,7 +58,7 @@ public:
     void update_life(char player);
     void update_heads();
 
-    bool update_move();
+    bool update_cycle();
 
     bool find_life(Node* head);
     int remove_stones(Node* head);
@@ -70,6 +70,9 @@ public:
     Node* get_node(int index);
     int get_liberties(int x, int y);
     int get_lib_amount(int index);
+    int get_moves_size();
+    bool get_up_to_date();
+
 
     std::vector<Node*> get_group(Node* head);  // this one is aperently super epic!
     //void rec_group(Node* head, std::vector<Node*> *nodes);

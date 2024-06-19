@@ -1,7 +1,7 @@
 #include "Board.h"
 
 // Constructor
-Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int c) 
+Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int* c) 
 {
     this->w = size;
     this->h = size;
@@ -11,11 +11,10 @@ Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int
     player = 'B';
     //moves = parseSGF(file_path);
 
-    if (cycle == -1) cycle = moves.size();
+    if (*cycle == -1) *cycle = moves.size();
 
     nodes = vect;
     nodes.resize(size * size);
-    liberties.resize(size * size);
 
     for (int i = 0; i < size; i++)
     {
@@ -28,7 +27,7 @@ Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int
     }
 }
 
-Board::Board(int size, std::vector<Node>& vect, int c) 
+Board::Board(int size, std::vector<Node>& vect, int* c) 
 {
     this->w = size;
     this->h = size;
@@ -49,7 +48,7 @@ Board::Board(int size, std::vector<Node>& vect, int c)
         {4,8}, {8,1}
     };
 
-    if (cycle == -1) cycle = moves.size();
+    if (*cycle == -1) *cycle = moves.size();
 
     nodes = vect;
     nodes.resize(size * size);
@@ -88,6 +87,7 @@ void Board::update(char player)
     update_heads();
 
     update_life (player);
+
 }
 
 int Board::get_index(int x, int y) {
@@ -178,6 +178,16 @@ int Board::get_lib_amount(int index)
 {
     return liberties[index];
 }
+int Board::get_moves_size()
+{
+    return moves.size();
+}
+
+bool Board::get_up_to_date()
+{
+    return (move_count == *cycle);
+}
+
 
 void Board::build_dfs(const int index)
 {
@@ -329,8 +339,6 @@ void Board::print()
 
 void Board::update_heads()
 {
-    //std::string status = "alive";
-
     heads.resize(0);
     reset_visited();
 
@@ -340,56 +348,38 @@ void Board::update_heads()
         {
             //bool alive = false;
             std::vector<Node*> vect = get_group(&nodes[k]);
-
-
-
-            
-            
-            for (int l = 0; l < vect.size(); l++) 
-            {
-                int liberties = get_lib_amount(vect[l]->get_index());
-
-                //print_coords(vect[l]);
-                //std::cout << "liberties: "<< liberties << std::endl;
-
-                if (!(liberties != 0))
-                {
-                    //status = "dead";
-                }
-            }
-
             heads.push_back(&nodes[k]);
         }
     }
 }
 
-bool Board::update_move()
-{    
-    if (move_count < cycle)
+bool Board::update_cycle()
+{   
+    std::cout << "move_count: " << move_count << ", cycle: "<< *cycle << std::endl; 
+    if (move_count < *cycle)
         {
             int x = moves[move_count].first;
             int y = moves[move_count].second;    
         
             if (add_move(moves[move_count].first, moves[move_count].second, player)) 
             {
-                //std::cerr << "Error: bad move" << std::endl;
+                std::cerr << "Error: bad move" << std::endl;
             }
             else
             {
                 if(player == 'W') player = 'B';
                 else player = 'W';    
             }
-
             update(player);     
             move_count++;
             return true;
         }
-        else if (cycle < move_count)
+        else if (*cycle < move_count)
         {
             reset();
             player = 'B';
 
-            for (move_count = 0; move_count < cycle; move_count++)
+            for (move_count = 0; move_count < *cycle; move_count++)
             {
                 int x = moves[move_count].first;
                 int y = moves[move_count].second;    
@@ -407,9 +397,8 @@ bool Board::update_move()
             }
             return true;
         }
-        if (cycle == move_count)
+        if (*cycle == move_count)
         {
-            print();
             return false;
         } 
 }
@@ -510,7 +499,6 @@ void Board::update_liberties()
         {
             int l = get_liberties(j, i);
             int index = get_index(j, i);
-            liberties[index]  = l;
             nodes[index].set_liberties(l);
         }
     }
@@ -520,7 +508,6 @@ void Board::update_liberties()
 
 void Board::update_life(char player)
 {
-    int i = 0;
     for (auto head : heads)
     {
 
@@ -534,14 +521,17 @@ void Board::update_life(char player)
             liberties_update.push_back(e->get_liberties());
         }
 
-        for (auto e : liberties)
+        for (auto e : liberties_update)
         {
             if (e == 0) continue;
 
             else life = true;
         }
 
-        if (!life && head->get_player() == player) remove_stones(head); 
+        if (!life && head->get_player() == player) 
+        {
+            remove_stones(head); 
+        }
     }
 }
 
@@ -562,8 +552,8 @@ int Board::remove_stones(Node *head)
 
     for (int i = 0; i < dead_stones.size(); i++) 
     {
-        std::cout << "deleting node idx: " << i<< std::endl;
-        nodes[i].set_player('.'); 
+        //std::cout << "deleting node idx: " << i<< std::endl;
+        dead_stones[i]->set_player('.'); 
     }
 
     return dead_stones.size();
