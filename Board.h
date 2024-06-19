@@ -21,7 +21,7 @@ private:
     int w, h;
     int s;
 
-    int* cycle;
+    int cycle;
     int move_count = 0;
 
     char player = 'B';
@@ -91,8 +91,8 @@ private:
 
 
 public:
-    Board(int size, std::vector<Node>& vect, const std::string file_path, int* c);
-    Board(int size, std::vector<Node>& vect, int* c);
+    Board(int size, std::vector<Node>& vect, const std::string file_path);
+    Board(int size, std::vector<Node>& vect);
 
     ~Board();
 
