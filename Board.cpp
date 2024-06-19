@@ -67,7 +67,7 @@ Board::Board(int size, std::vector<Node>& vect, int* c)
 // Destructor
 Board::~Board() {}
 
-void Board::update(char player)
+void Board::update_cycle(char player)
 {
     update_groups();
     update_liberties();
@@ -348,7 +348,7 @@ void Board::update_heads()
     }
 }
 
-bool Board::update_cycle()
+bool Board::update()
 {   
     std::cout << "move_count: " << move_count << ", cycle: "<< *cycle << std::endl; 
     if (move_count < *cycle)
@@ -365,7 +365,7 @@ bool Board::update_cycle()
                 if(player == 'W') player = 'B';
                 else player = 'W';    
             }
-            update(player);     
+            update_cycle(player);     
             move_count++;
             return true;
         }
@@ -388,7 +388,7 @@ bool Board::update_cycle()
                     if(player == 'W') player = 'B';
                     else player = 'W';    
                 }
-                update(player);     
+                update_cycle(player);     
             }
             return true;
         }

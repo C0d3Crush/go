@@ -16,8 +16,9 @@ int main (int argc, char** argv)
 
     Board board(9, nodes, &cycle);
 
-    while(board.update_cycle())
+    while(is_running)
     {
+        is_running = board.update();
         board.print();
     }
     

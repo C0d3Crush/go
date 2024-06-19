@@ -49,15 +49,14 @@ public:
 
     ~Board();
 
-    // we need a draw function in the future here!
+    // void draw();
 
-    void update(char player);
+    void update_cycle(char player);
     void update_groups();
     void update_liberties();
     void update_life(char player);
     void update_heads();
-
-    bool update_cycle();
+    bool update();
 
     bool find_life(Node* head);
     int remove_stones(Node* head);
