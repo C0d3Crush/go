@@ -120,10 +120,6 @@ int Board::height()
     return h;
 }
 
-Node *Board::get_node(int index)
-{
-    return &nodes[index];
-}
 
 int Board::add_move(int x, int y, char player)
 {
@@ -187,8 +183,8 @@ bool Board::get_up_to_date()
 void Board::build_dfs(const int index)
 {
 
-    if (get_node(index)->get_player() == '.') return;
-    if (get_node(index)->get_visited()) return;
+    if (nodes[index].get_player() == '.') return;
+    if (nodes[index].get_visited()) return;
 
     int x = index / w;
     int y = index % h;
