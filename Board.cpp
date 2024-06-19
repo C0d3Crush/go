@@ -60,11 +60,11 @@ Board::~Board() {}
 
 void Board::draw(SDL_Renderer *renderer)
 {
-    drawBoard(renderer);
-    drawStones(renderer);
+    draw_board(renderer);
+    draw_stones(renderer);
 }
 
-void Board::drawStones(SDL_Renderer *renderer)
+void Board::draw_stones(SDL_Renderer *renderer)
 {
 
     int cellSize = (WINDOW_WIDTH - 2 * BOARD_MARGIN) / (w - 1);
@@ -72,7 +72,7 @@ void Board::drawStones(SDL_Renderer *renderer)
 
     for (int i = 0; i < s; i++)
     {
-        Node* node = get_node(i);
+        Node* node = &nodes[i];//get_node(i);
 
         if (node->get_player() == '.') continue;
 
@@ -80,7 +80,7 @@ void Board::drawStones(SDL_Renderer *renderer)
         int y = cellSize * (get_y(i)) + BOARD_MARGIN;
 
         //std::cout<<"test:"<<"x: "<<x<<" y: "<<y<<std::endl;
-        if (get_node(i)->get_player() == 'B') 
+        if (node->get_player() == 'B') 
         { 
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         } 
@@ -88,11 +88,11 @@ void Board::drawStones(SDL_Renderer *renderer)
         {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         }
-        drawSquare(renderer, x, y, radius);
+        draw_square(renderer, x, y, radius);
     }
 }
 
-void Board::drawSquare(SDL_Renderer *renderer, int centerX, int centerY, int radius)
+void Board::draw_square(SDL_Renderer *renderer, int centerX, int centerY, int radius)
 {
 
     int squareSize = radius * 2; // Square size is double the radius
@@ -106,7 +106,7 @@ void Board::drawSquare(SDL_Renderer *renderer, int centerX, int centerY, int rad
     SDL_RenderFillRect(renderer, &squareRect);
 }
 
-void Board::drawBoard(SDL_Renderer *renderer)
+void Board::draw_board(SDL_Renderer *renderer)
 {
     //int boardSize = s;
 
@@ -135,29 +135,7 @@ void Board::drawBoard(SDL_Renderer *renderer)
     }
 }
 
-void Board::update(char player)
-{
-    update_groups();
-    update_liberties();
-    update_heads();
-
-    if (player == 'W') {player = 'B';}
-    else {player = 'W';}
-
-    update_life(player);
-
-    if (player == 'W') {player = 'B';}
-    else {player = 'W';}
-
-    update_groups();
-    update_liberties();
-    update_heads();
-
-    update_life (player);
-
-}
-
-void Board::handleMouseClick(const SDL_Event& e, char* player, int* cycle) 
+void Board::handle_mouse_click(const SDL_Event& e, char* player, int* cycle) 
 {
     std::cout << ">>===== Handle Mouse =====<<" << std::endl;
     if (e.button.button == SDL_BUTTON_LEFT) 
@@ -195,13 +173,13 @@ void Board::handleMouseClick(const SDL_Event& e, char* player, int* cycle)
         {
             int index = get_index(gridX, gridY);
 
-            std::cout << "index: " <<index << " player at coords: " << get_node(index)->get_player() << std::endl;
+            std::cout << "index: " <<index << " player at coords: " << nodes[index].get_player() << std::endl;
             
             std::cout << "(" << gridX << "; " << gridY << ")" << std::endl;
 
             std::cout << "(" << get_x(index) << "; "<< get_y(index) << ")"<< std::endl;
 
-            if (get_node(index)->get_player() == '.') 
+            if (nodes[index].get_player() == '.') 
             {
                 std::cout << *cycle << std::endl;
                 *cycle = *cycle + 1;
@@ -248,10 +226,6 @@ int Board::height()
     return h;
 }
 
-Node *Board::get_node(int index)
-{
-    return &nodes[index];
-}
 
 int Board::add_move(int x, int y, char player)
 {
@@ -314,8 +288,8 @@ bool Board::get_up_to_date()
 void Board::build_dfs(const int index)
 {
 
-    if (get_node(index)->get_player() == '.') return;
-    if (get_node(index)->get_visited()) return;
+    if (nodes[index].get_player() == '.') return;
+    if (nodes[index].get_visited()) return;
 
     int x = index / w;
     int y = index % h;
@@ -475,8 +449,8 @@ void Board::update_heads()
     }
 }
 
-bool Board::update_cycle()
-{    
+bool Board::update()
+{   
     std::cout << "move_count: " << move_count << ", cycle: "<< *cycle << std::endl; 
     if (move_count < *cycle)
         {
@@ -492,7 +466,7 @@ bool Board::update_cycle()
                 if(player == 'W') player = 'B';
                 else player = 'W';    
             }
-            update(player);     
+            update_cycle(player);     
             move_count++;
             return true;
         }
@@ -515,7 +489,7 @@ bool Board::update_cycle()
                     if(player == 'W') player = 'B';
                     else player = 'W';    
                 }
-                update(player);     
+                update_cycle(player);     
             }
             return true;
         }
@@ -599,6 +573,29 @@ void Board::print_coords(int index)
 {
 
     std::cout << "coords: (" << get_x(index) << ";" << get_y(index) << ")" << std::endl; 
+}
+
+void Board::update_cycle(char player)
+{
+
+    update_groups();
+    update_liberties();
+    update_heads();
+
+    if (player == 'W') {player = 'B';}
+    else {player = 'W';}
+
+    update_life(player);
+
+    if (player == 'W') {player = 'B';}
+    else {player = 'W';}
+
+    update_groups();
+    update_liberties();
+    update_heads();
+
+    update_life (player);
+
 }
 
 void Board::update_groups()

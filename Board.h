@@ -40,73 +40,73 @@ private:
     std::string black_player;
     std::string white_player; 
 
+    // for drawing 
+    void draw_stones(SDL_Renderer *renderer);
+    void draw_square(SDL_Renderer *renderer, int centerX, int centerY, int radius);
+    void draw_board(SDL_Renderer *renderer);
+
+    // for update
+    void update_cycle(char player);
+    void update_groups();
+    void update_liberties();
+    void update_life(char player);
+    void update_heads();
+
     // reset
     void reset_visited();
     void reset_children();
     void reset_parent();
     void reset();
 
+    // for testing
+    void print_heads();
+    void print_groups();
+    void print_coords(int index);
+
+    // access function
+    int size();
+    int width();
+    int height();
+
     int get_index(int x, int y);
     int get_x(int index);
     int get_y(int index);
 
-public:
-    
-    void handleMouseClick(const SDL_Event& e, char* player, int* cycle);
+    int get_liberties(int x, int y);
 
+    std::vector<Node*> get_group(Node* head);  // this one is aperently super epic!
+    
+    int add_move(int x, int y, char player);
+
+    // dfs operations    
+    void build_dfs(int index);
+    bool dfs_life(Node* head);
+    void dfs_group(Node* head, std::vector<Node*> *nodes);
+
+    bool find_life(Node* head);
+    int remove_stones(Node* head);
+
+    // file access
+    std::vector<std::pair<int, int>> parseSGF(const std::string& filePath);
+
+
+public:
     Board(int size, std::vector<Node>& vect, const std::string file_path, int* c);
     Board(int size, std::vector<Node>& vect, int* c);
 
     ~Board();
 
-    void update(char player);
-    bool update_cycle();
-    void update_groups();
-    void update_liberties();
-    void update_life(char player);
-    void update_heads();
-
-    void draw(SDL_Renderer *renderer);
-    void drawStones(SDL_Renderer* renderer); //const GameData& gameData, int move_count) 
-    void drawSquare(SDL_Renderer* renderer, int centerX, int centerY, int radius);
-    void drawBoard(SDL_Renderer* renderer);
-
-    int size();
-    int width();
-    int height();    
-
-    bool find_life(Node* head);
-    int remove_stones(Node* head);
-
-    
-    Node* get_node(int index);
-    int get_liberties(int x, int y);
-    //int get_lib_amount(int index);
-    int get_moves_size();
-    bool get_up_to_date();
-
-    std::vector<Node*> get_group(Node* head);  // this one is aperently super epic!
-    //void rec_group(Node* head, std::vector<Node*> *nodes);
-
-
-    int add_move(int x, int y, char player);
-    
-    void build_dfs(int index);
-
-    bool dfs_life(Node* head);
-    void dfs_group(Node* head, std::vector<Node*> *nodes);
-    //void reset();
-
-    // print
     void print();
-    void print_liberties();
+    void draw(SDL_Renderer *renderer);
 
-    // file access
-    std::vector<std::pair<int, int>> parseSGF(const std::string& filePath);
+    bool update();
 
-    void print_heads();
-    void print_groups();
-    void print_coords(int index);
+    bool get_up_to_date();
+    int get_moves_size();
+
+    // visual interface 
+    void handle_mouse_click(const SDL_Event& e, char* player, int* cycle);
+
 };
 
 #endif // GAME_H

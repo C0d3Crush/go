@@ -73,7 +73,7 @@ int main (int argc, char** argv)
             {
                 if(board.get_up_to_date())
                 {
-                    board.handleMouseClick(e, &player, &cycle);
+                    board.handle_mouse_click(e, &player, &cycle);
                     //board.update(player);     
                 }
                 
@@ -100,7 +100,7 @@ int main (int argc, char** argv)
             }
         }
 
-        board.update_cycle();
+        board.update();
         
         SDL_SetRenderDrawColor(renderer, 255, 204, 153, 255); 
         SDL_RenderClear(renderer);
