@@ -1,17 +1,19 @@
 #include "Board.h"
 
 // Constructor
-Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int* c) 
+Board::Board(int size, std::vector<Node>& vect, const std::string file_path) 
 {
     this->w = size;
     this->h = size;
     this->s = size * size;
 
-    cycle = c;
     player = 'B';
     //moves = parseSGF(file_path);
 
-    if (*cycle == -1) *cycle = moves.size();
+    //cycle = moves.size();
+
+
+    if (cycle == -1) cycle = moves.size();
 
     nodes = vect;
     nodes.resize(size * size);
@@ -27,13 +29,12 @@ Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int
     }
 }
 
-Board::Board(int size, std::vector<Node>& vect, int* c) 
+Board::Board(int size, std::vector<Node>& vect) 
 {
     this->w = size;
     this->h = size;
     this->s = size * size;
 
-    cycle = c;
     player = 'B';
     moves = {
         {0,0}, {0,1}, 
@@ -48,7 +49,9 @@ Board::Board(int size, std::vector<Node>& vect, int* c)
         {4,8}, {8,1}
     };
 
-    if (*cycle == -1) *cycle = moves.size();
+    cycle = moves.size();
+
+    if (cycle == -1) cycle = moves.size();
 
     nodes = vect;
     nodes.resize(size * size);
@@ -176,7 +179,7 @@ int Board::get_moves_size()
 
 bool Board::get_up_to_date()
 {
-    return (move_count == *cycle);
+    return (move_count == cycle);
 }
 
 
@@ -346,8 +349,8 @@ void Board::update_heads()
 
 bool Board::update()
 {   
-    std::cout << "move_count: " << move_count << ", cycle: "<< *cycle << std::endl; 
-    if (move_count < *cycle)
+    std::cout << "move_count: " << move_count << ", cycle: "<< cycle << std::endl; 
+    if (move_count < cycle)
         {
             int x = moves[move_count].first;
             int y = moves[move_count].second;    
@@ -365,12 +368,12 @@ bool Board::update()
             move_count++;
             return true;
         }
-        else if (*cycle < move_count)
+        else if (cycle < move_count)
         {
             reset();
             player = 'B';
 
-            for (move_count = 0; move_count < *cycle; move_count++)
+            for (move_count = 0; move_count < cycle; move_count++)
             {
                 int x = moves[move_count].first;
                 int y = moves[move_count].second;    
@@ -388,7 +391,7 @@ bool Board::update()
             }
             return true;
         }
-        if (*cycle == move_count)
+        if (cycle == move_count)
         {
             return false;
         } 
