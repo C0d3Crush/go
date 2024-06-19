@@ -273,7 +273,7 @@ void Board::reset()
 void Board::print()
 {   
     std::cout << "board" << std::endl;
-
+    std::cout << "_01234678" << std::endl;
     for (int i = 0; i < h; i++)
     {
         std::cout<<i;
@@ -327,6 +327,7 @@ void Board::update_heads()
 
 bool Board::update_move()
 {    
+    std::cout << "mc: "<< move_count << " ,c: "<< cycle << std::endl;
     if (move_count < cycle)
         {
             int x = moves[move_count].first;
@@ -502,6 +503,8 @@ void Board::update_life(char player)
 
             else life = true;
         }
+        
+        std::cout << "life: " <<life << "player: "<< player << std::endl;
 
         if (!life && head->get_player() == player) remove_stones(head); 
     }
