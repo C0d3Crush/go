@@ -9,37 +9,33 @@ const int BOARD_MARGIN = 30;
 
 int main (int argc, char** argv)
 {
-    int cycle = -1;
+
+    int cycle = 0;
     int move_count = 0;
     char player = 'B';
     bool is_running = true;
 
     std::vector<Node> nodes;
-
     std::vector<Board> boards;
-    int boards_idx = 0;
-
-    std::string file_path = "../data/sample.sgf";
-
-    boards.push_back(Board(9,nodes, file_path, &cycle));
-    boards.push_back(Board(9,nodes, &cycle));
-
-    Board* board = &boards[boards_idx];
-
-    if (argc == 1)
+    
+    if (argc == 1 )
     {
         std::cout << "empty board:" << std::endl;
-        cycle = 0;
-        boards_idx = 1;
+        boards.push_back(Board(9, nodes));
     }
     else if (argc == 2)
     {
-        std::cout << "loaded board:" << std::endl;
-        cycle = board->get_moves_size();
-        boards_idx = 0;
-    }
 
-    //atoi(argv[1])
+        std::cout << "loaded board:" << std::endl;
+        boards.push_back(Board(9,nodes, argv[1]));
+    }
+    else  
+    {
+        std::cerr << "Usage: " << argv[0] << " <path>\n";
+        return 1;
+    }
+    
+    Board* board = &boards[0];
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) 
     {
@@ -90,7 +86,7 @@ int main (int argc, char** argv)
             {
                 if(board->get_up_to_date())
                 {
-                    board->handle_mouse_click(e, &player, &cycle);
+                    board->handle_mouse_click(e, &player, cycle);
                     //board.update(player);     
                 }
             } 
