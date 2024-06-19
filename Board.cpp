@@ -12,6 +12,7 @@ Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int
     //moves = parseSGF(file_path);
 
     if (*cycle == -1) *cycle = moves.size();
+    if (*cycle == -1) *cycle = moves.size();
 
     nodes = vect;
     nodes.resize(size * size);
@@ -153,6 +154,7 @@ void Board::update(char player)
     update_heads();
 
     update_life (player);
+
 }
 
 void Board::handleMouseClick(const SDL_Event& e, char* player, int* cycle) 
@@ -473,8 +475,9 @@ void Board::update_heads()
     }
 }
 
-bool Board::update_move()
+bool Board::update_cycle()
 {    
+    std::cout << "move_count: " << move_count << ", cycle: "<< *cycle << std::endl; 
     if (move_count < *cycle)
         {
             int x = moves[move_count].first;
@@ -482,14 +485,13 @@ bool Board::update_move()
         
             if (add_move(moves[move_count].first, moves[move_count].second, player)) 
             {
-                //std::cerr << "Error: bad move" << std::endl;
+                std::cerr << "Error: bad move" << std::endl;
             }
             else
             {
                 if(player == 'W') player = 'B';
                 else player = 'W';    
             }
-
             update(player);     
             move_count++;
             return true;
@@ -632,23 +634,26 @@ void Board::update_life(char player)
     {
 
         std::vector<Node*> group = get_group(head);
-        std::vector<int> liberties;
+        std::vector<int> liberties_update;
 
         bool life = false;
 
         for (auto e : group)
         {
-            liberties.push_back(e->get_liberties());
+            liberties_update.push_back(e->get_liberties());
         }
 
-        for (auto e : liberties)
+        for (auto e : liberties_update)
         {
             if (e == 0) continue;
 
             else life = true;
         }
 
-        if (!life && head->get_player() == player) remove_stones(head); 
+        if (!life && head->get_player() == player) 
+        {
+            remove_stones(head); 
+        }
     }
 }
 

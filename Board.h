@@ -21,7 +21,7 @@ private:
     int w, h;
     int s;
 
-    int* cycle = 0;
+    int* cycle;
     int move_count = 0;
 
     char player = 'B';
@@ -49,21 +49,6 @@ private:
     int get_index(int x, int y);
     int get_x(int index);
     int get_y(int index);
-    
-    void update_groups();
-    void update_liberties();
-    void update_life(char player);
-    void update_heads();
-
-    void drawStones(SDL_Renderer* renderer); //const GameData& gameData, int move_count) 
-    void drawSquare(SDL_Renderer* renderer, int centerX, int centerY, int radius);
-    void drawBoard(SDL_Renderer* renderer);
-
-    int size();
-    int width();
-    int height();
-
-
 
 public:
     
@@ -74,11 +59,21 @@ public:
 
     ~Board();
 
-    void draw(SDL_Renderer *renderer);
-    
     void update(char player);
-    
-    bool update_move();
+    bool update_cycle();
+    void update_groups();
+    void update_liberties();
+    void update_life(char player);
+    void update_heads();
+
+    void draw(SDL_Renderer *renderer);
+    void drawStones(SDL_Renderer* renderer); //const GameData& gameData, int move_count) 
+    void drawSquare(SDL_Renderer* renderer, int centerX, int centerY, int radius);
+    void drawBoard(SDL_Renderer* renderer);
+
+    int size();
+    int width();
+    int height();    
 
     bool find_life(Node* head);
     int remove_stones(Node* head);
@@ -86,7 +81,7 @@ public:
     
     Node* get_node(int index);
     int get_liberties(int x, int y);
-    int get_lib_amount(int index);
+    //int get_lib_amount(int index);
     int get_moves_size();
     bool get_up_to_date();
 

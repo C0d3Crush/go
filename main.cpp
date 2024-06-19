@@ -100,7 +100,7 @@ int main (int argc, char** argv)
             }
         }
 
-        board.update_move();
+        board.update_cycle();
         
         SDL_SetRenderDrawColor(renderer, 255, 204, 153, 255); 
         SDL_RenderClear(renderer);
