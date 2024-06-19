@@ -1,7 +1,7 @@
 #include "Board.h"
 
 // Constructor
-Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int c) 
+Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int* c) 
 {
     this->w = size;
     this->h = size;
@@ -11,7 +11,7 @@ Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int
     player = 'B';
     //moves = parseSGF(file_path);
 
-    if (cycle == -1) cycle = moves.size();
+    if (*cycle == -1) *cycle = moves.size();
 
     nodes = vect;
     nodes.resize(size * size);
@@ -28,7 +28,7 @@ Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int
 }
 
 
-Board::Board(int size, std::vector<Node>& vect, int c)
+Board::Board(int size, std::vector<Node>& vect, int* c)
 {
     this->w = size;
     this->h = size;
@@ -38,7 +38,7 @@ Board::Board(int size, std::vector<Node>& vect, int c)
     player = 'B';
     moves = {{5,5}};
 
-    if (cycle == -1) cycle = moves.size();
+    if (*cycle == -1) *cycle = moves.size();
 
     nodes = vect;
     nodes.resize(size * size);
@@ -57,16 +57,16 @@ Board::Board(int size, std::vector<Node>& vect, int c)
 // Destructor
 Board::~Board() {}
 
-void Board::draw(SDL_Renderer *renderer, int window_width, int board_margin)
+void Board::draw(SDL_Renderer *renderer)
 {
-    drawBoard(renderer, window_width, board_margin);
-    drawStones(renderer, window_width, board_margin);
+    drawBoard(renderer);
+    drawStones(renderer);
 }
 
-void Board::drawStones(SDL_Renderer *renderer, int window_width, int board_margin)
+void Board::drawStones(SDL_Renderer *renderer)
 {
 
-    int cellSize = (window_width - 2 * board_margin) / (w - 1);
+    int cellSize = (WINDOW_WIDTH - 2 * BOARD_MARGIN) / (w - 1);
     int radius = cellSize / 2;
 
     for (int i = 0; i < s; i++)
@@ -75,8 +75,8 @@ void Board::drawStones(SDL_Renderer *renderer, int window_width, int board_margi
 
         if (node->get_player() == '.') continue;
 
-        int x = cellSize * (get_x(i)) + board_margin;
-        int y = cellSize * (get_y(i)) + board_margin;
+        int x = cellSize * (get_x(i)) + BOARD_MARGIN;
+        int y = cellSize * (get_y(i)) + BOARD_MARGIN;
 
         //std::cout<<"test:"<<"x: "<<x<<" y: "<<y<<std::endl;
         if (get_node(i)->get_player() == 'B') 
@@ -105,11 +105,11 @@ void Board::drawSquare(SDL_Renderer *renderer, int centerX, int centerY, int rad
     SDL_RenderFillRect(renderer, &squareRect);
 }
 
-void Board::drawBoard(SDL_Renderer *renderer, int window_width, int board_margin)
+void Board::drawBoard(SDL_Renderer *renderer)
 {
     //int boardSize = s;
 
-    int cellSize = (window_width - 2 * board_margin) / (w - 1);
+    int cellSize = (WINDOW_WIDTH - 2 * BOARD_MARGIN) / (w - 1);
     
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     
@@ -118,18 +118,18 @@ void Board::drawBoard(SDL_Renderer *renderer, int window_width, int board_margin
         SDL_RenderDrawLine
         (
             renderer, 
-            board_margin, 
-            board_margin + i * cellSize, 
-            window_width - board_margin, 
-            board_margin + i * cellSize
+            BOARD_MARGIN, 
+            BOARD_MARGIN + i * cellSize, 
+            WINDOW_WIDTH - BOARD_MARGIN, 
+            BOARD_MARGIN + i * cellSize
         );
         SDL_RenderDrawLine
         (
             renderer, 
-            board_margin + i * cellSize, 
-            board_margin, 
-            board_margin + i * cellSize, 
-            window_width - board_margin
+            BOARD_MARGIN + i * cellSize, 
+            BOARD_MARGIN, 
+            BOARD_MARGIN + i * cellSize, 
+            WINDOW_WIDTH - BOARD_MARGIN
         );
     }
 }
@@ -155,7 +155,67 @@ void Board::update(char player)
     update_life (player);
 }
 
-int Board::get_index(int x, int y) {
+void Board::handleMouseClick(const SDL_Event& e, char* player, int* cycle) 
+{
+    std::cout << ">>===== Handle Mouse =====<<" << std::endl;
+    if (e.button.button == SDL_BUTTON_LEFT) 
+    {
+        // Capture raw mouse coordinates
+        int mouseX = e.button.x;
+        int mouseY = e.button.y;
+
+        // Calculate cell size
+        int boardWidth = width();
+        int boardHeight = height();
+        int cellSize = (WINDOW_WIDTH - BOARD_MARGIN * 2) / boardWidth;
+
+        // Adjust mouse coordinates by subtracting the board's margin
+        int adjustedMouseX = mouseX - BOARD_MARGIN;
+        int adjustedMouseY = mouseY - BOARD_MARGIN;
+
+        // Ensure adjusted coordinates are within valid range
+        if (adjustedMouseX < 0 || adjustedMouseX >= (boardWidth * cellSize) || 
+            adjustedMouseY < 0 || adjustedMouseY >= (boardHeight * cellSize)) {
+            std::cout << "Mouse coordinates out of board bounds!" << std::endl;
+            return;
+        }
+
+        // Convert adjusted mouse coordinates to grid coordinates with rounding
+        int gridX = adjustedMouseX / cellSize;
+        int gridY = adjustedMouseY / cellSize;
+
+        // Ensure grid coordinates are within board dimensions
+        if (gridX >= boardWidth) gridX = boardWidth - 1;
+        if (gridY >= boardHeight) gridY = boardHeight - 1;
+
+        // Ensure the calculated grid position is within the board limits
+        if (gridX >= 0 && gridX < size() && gridY >= 0 && gridY < size()) 
+        {
+            int index = get_index(gridX, gridY);
+
+            std::cout << "index: " <<index << " player at coords: " << get_node(index)->get_player() << std::endl;
+            
+            std::cout << "(" << gridX << "; " << gridY << ")" << std::endl;
+
+            std::cout << "(" << get_x(index) << "; "<< get_y(index) << ")"<< std::endl;
+
+            if (get_node(index)->get_player() == '.') 
+            {
+                std::cout << *cycle << std::endl;
+                *cycle = *cycle + 1;
+                moves.push_back({gridX, gridY});
+            }
+            else std::cout << "Cant place there. Space is ocupied." << std::endl;
+        }
+        else
+        {
+            std::cout << "Click out of board boundaries!" << std::endl;
+        }
+    }
+}
+
+int Board::get_index(int x, int y)
+{
     return (y * h) + x;
 }
 
@@ -242,6 +302,11 @@ int Board::get_liberties(int x, int y)
 int Board::get_moves_size()
 {
     return moves.size();
+}
+
+bool Board::get_up_to_date()
+{
+    return (move_count == *cycle);
 }
 
 void Board::build_dfs(const int index)
@@ -410,7 +475,7 @@ void Board::update_heads()
 
 bool Board::update_move()
 {    
-    if (move_count < cycle)
+    if (move_count < *cycle)
         {
             int x = moves[move_count].first;
             int y = moves[move_count].second;    
@@ -429,12 +494,12 @@ bool Board::update_move()
             move_count++;
             return true;
         }
-        else if (cycle < move_count)
+        else if (*cycle < move_count)
         {
             reset();
             player = 'B';
 
-            for (move_count = 0; move_count < cycle; move_count++)
+            for (move_count = 0; move_count < *cycle; move_count++)
             {
                 int x = moves[move_count].first;
                 int y = moves[move_count].second;    
@@ -452,9 +517,10 @@ bool Board::update_move()
             }
             return true;
         }
-        if (cycle == move_count)
+        if (*cycle == move_count)
         {
-            print();
+            //std::cout << "up to date" << std::endl;
+            //print();
             return false;
         } 
 }
