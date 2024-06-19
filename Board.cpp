@@ -1,7 +1,7 @@
 #include "Board.h"
 
 // Constructor
-Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int c) 
+Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int* c) 
 {
     this->w = size;
     this->h = size;
@@ -9,13 +9,49 @@ Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int
 
     cycle = c;
     player = 'B';
-    moves = parseSGF(file_path);
+    //moves = parseSGF(file_path);
 
-    if (cycle == -1) cycle = moves.size();
+    if (*cycle == -1) *cycle = moves.size();
 
     nodes = vect;
     nodes.resize(size * size);
-    liberties.resize(size * size);
+
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = 0; j < size; j++) 
+        {
+            int index = get_index(j, i);
+            nodes[index].set_player('.');    
+            nodes[index].set_index(index);
+        }
+    }
+}
+
+Board::Board(int size, std::vector<Node>& vect, int* c) 
+{
+    this->w = size;
+    this->h = size;
+    this->s = size * size;
+
+    cycle = c;
+    player = 'B';
+    moves = {
+        {0,0}, {0,1}, 
+        {1,0}, {4,4}, 
+        {2,0}, {4,5}, 
+        {3,4}, {2,4}, 
+        {1,4}, {0,4}, 
+        {0,3}, {0,2}, 
+        {0,8}, {3,0},
+        {1,8}, {2,1},
+        {2,8}, {1,1},
+        {4,8}, {8,1}
+    };
+
+    if (*cycle == -1) *cycle = moves.size();
+
+    nodes = vect;
+    nodes.resize(size * size);
 
     for (int i = 0; i < size; i++)
     {
@@ -31,7 +67,7 @@ Board::Board(int size, std::vector<Node>& vect, const std::string file_path, int
 // Destructor
 Board::~Board() {}
 
-void Board::update(char player)
+void Board::update_cycle(char player)
 {
     update_groups();
     update_liberties();
@@ -50,6 +86,7 @@ void Board::update(char player)
     update_heads();
 
     update_life (player);
+
 }
 
 int Board::get_index(int x, int y) {
@@ -83,10 +120,6 @@ int Board::height()
     return h;
 }
 
-Node *Board::get_node(int index)
-{
-    return &nodes[index];
-}
 
 int Board::add_move(int x, int y, char player)
 {
@@ -136,16 +169,22 @@ int Board::get_liberties(int x, int y)
     return count;
 }
 
-int Board::get_lib_amount(int index)
+int Board::get_moves_size()
 {
-    return liberties[index];
+    return moves.size();
 }
+
+bool Board::get_up_to_date()
+{
+    return (move_count == *cycle);
+}
+
 
 void Board::build_dfs(const int index)
 {
 
-    if (get_node(index)->get_player() == '.') return;
-    if (get_node(index)->get_visited()) return;
+    if (nodes[index].get_player() == '.') return;
+    if (nodes[index].get_visited()) return;
 
     int x = index / w;
     int y = index % h;
@@ -291,8 +330,6 @@ void Board::print()
 
 void Board::update_heads()
 {
-    //std::string status = "alive";
-
     heads.resize(0);
     reset_visited();
 
@@ -302,57 +339,38 @@ void Board::update_heads()
         {
             //bool alive = false;
             std::vector<Node*> vect = get_group(&nodes[k]);
-
-
-
-            
-            
-            for (int l = 0; l < vect.size(); l++) 
-            {
-                int liberties = get_lib_amount(vect[l]->get_index());
-
-                //print_coords(vect[l]);
-                //std::cout << "liberties: "<< liberties << std::endl;
-
-                if (!(liberties != 0))
-                {
-                    //status = "dead";
-                }
-            }
-
             heads.push_back(&nodes[k]);
         }
     }
 }
 
-bool Board::update_move()
-{    
-    std::cout << "mc: "<< move_count << " ,c: "<< cycle << std::endl;
-    if (move_count < cycle)
+bool Board::update()
+{   
+    std::cout << "move_count: " << move_count << ", cycle: "<< *cycle << std::endl; 
+    if (move_count < *cycle)
         {
             int x = moves[move_count].first;
             int y = moves[move_count].second;    
         
             if (add_move(moves[move_count].first, moves[move_count].second, player)) 
             {
-                //std::cerr << "Error: bad move" << std::endl;
+                std::cerr << "Error: bad move" << std::endl;
             }
             else
             {
                 if(player == 'W') player = 'B';
                 else player = 'W';    
             }
-
-            update(player);     
+            update_cycle(player);     
             move_count++;
             return true;
         }
-        else if (cycle < move_count)
+        else if (*cycle < move_count)
         {
             reset();
             player = 'B';
 
-            for (move_count = 0; move_count < cycle; move_count++)
+            for (move_count = 0; move_count < *cycle; move_count++)
             {
                 int x = moves[move_count].first;
                 int y = moves[move_count].second;    
@@ -366,13 +384,12 @@ bool Board::update_move()
                     if(player == 'W') player = 'B';
                     else player = 'W';    
                 }
-                update(player);     
+                update_cycle(player);     
             }
             return true;
         }
-        if (cycle == move_count)
+        if (*cycle == move_count)
         {
-            print();
             return false;
         } 
 }
@@ -473,7 +490,6 @@ void Board::update_liberties()
         {
             int l = get_liberties(j, i);
             int index = get_index(j, i);
-            liberties[index]  = l;
             nodes[index].set_liberties(l);
         }
     }
@@ -483,7 +499,6 @@ void Board::update_liberties()
 
 void Board::update_life(char player)
 {
-    int i = 0;
     for (auto head : heads)
     {
 
@@ -497,16 +512,17 @@ void Board::update_life(char player)
             liberties_update.push_back(e->get_liberties());
         }
 
-        for (auto e : liberties)
+        for (auto e : liberties_update)
         {
             if (e == 0) continue;
 
             else life = true;
         }
-        
-        std::cout << "life: " <<life << "player: "<< player << std::endl;
 
-        if (!life && head->get_player() == player) remove_stones(head); 
+        if (!life && head->get_player() == player) 
+        {
+            remove_stones(head); 
+        }
     }
 }
 
@@ -527,74 +543,9 @@ int Board::remove_stones(Node *head)
 
     for (int i = 0; i < dead_stones.size(); i++) 
     {
-        std::cout << "deleting node idx: " << i<< std::endl;
-        nodes[i].set_player('.'); 
+        //std::cout << "deleting node idx: " << i<< std::endl;
+        dead_stones[i]->set_player('.'); 
     }
 
     return dead_stones.size();
 }
-
-std::vector<std::pair<int, int>> Board::parseSGF(const std::string& filePath) {
-    std::vector<std::pair<int, int>> moves;
-
-    std::ifstream file(filePath);
-    if (!file) {
-        std::cerr << "Failed to open SGF file: " << filePath << std::endl;
-        return moves;
-    }
-
-    std::string line;
-    while (std::getline(file, line)) {
-        if (line.find("SZ[") != std::string::npos) {
-            int startPos = line.find("SZ[") + 3;
-            int endPos = line.find("]", startPos);
-            int boardSize = std::stoi(line.substr(startPos, endPos - startPos));
-            std::cout << "Board Size: " << boardSize << std::endl;
-        } else if (line.find("KM[") != std::string::npos) {
-            int startPos = line.find("KM[") + 3;
-            int endPos = line.find("]", startPos);
-            float komi = std::stof(line.substr(startPos, endPos - startPos));
-            std::cout << "Komi: " << komi << std::endl;
-        } else if (line.find("RU[") != std::string::npos) {
-            int startPos = line.find("RU[") + 3;
-            int endPos = line.find("]", startPos);
-            std::string ruleset = line.substr(startPos, endPos - startPos);
-            std::cout << "Ruleset: " << ruleset << std::endl;
-        } else if (line.find("RE[") != std::string::npos) {
-            int startPos = line.find("RE[") + 3;
-            int endPos = line.find("]", startPos);
-            std::string result = line.substr(startPos, endPos - startPos);
-            std::cout << "Result: " << result << std::endl;
-        } else if (line.find("PB[") != std::string::npos) {
-            int startPos = line.find("PB[") + 3;
-            int endPos = line.find("]", startPos);
-            std::string blackPlayer = line.substr(startPos, endPos - startPos);
-            std::cout << "Black Player: " << blackPlayer << std::endl;
-        } else if (line.find("PW[") != std::string::npos) {
-            int startPos = line.find("PW[") + 3;
-            int endPos = line.find("]", startPos);
-            std::string whitePlayer = line.substr(startPos, endPos - startPos);
-            std::cout << "White Player: " << whitePlayer << std::endl;
-        } else if (line.find(";B[") != std::string::npos || line.find(";W[") != std::string::npos) {
-            size_t pos = 0;
-            while ((pos = line.find(";")) != std::string::npos) {
-                std::string move = line.substr(pos + 1, 5); // Expecting format like "B[ab]"
-                line.erase(0, pos + 6); // Erase up to the next move
-
-                if (move.size() >= 4 && (move[0] == 'B' || move[0] == 'W')) {
-                    char player = move[0];
-                    char x = move[2];
-                    char y = move[3];
-                    if (x == ']' || y == ']') {
-                        // Pass move
-                        moves.push_back({-1, -1});
-                    } else {
-                        moves.push_back({x - 'a', y - 'a'});
-                    }
-                }
-            }
-        }
-    }
-    return moves;
-}
-

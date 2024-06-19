@@ -14,11 +14,12 @@ int main (int argc, char** argv)
         cycle = atoi(argv[1]);
     }
 
-    Board board(9, nodes, "../data/sample.sgf", cycle);
+    Board board(9, nodes, &cycle);
 
-    while(board.update_move())
+    while(is_running)
     {
-        
+        is_running = board.update();
+        board.print();
     }
     
     std::cout << "terminated." << std::endl;
