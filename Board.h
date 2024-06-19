@@ -21,7 +21,6 @@ private:
 
 
     std::vector<Node> nodes;
-    std::vector<int> liberties;
     std::vector<Node*> heads;
 
     std::vector<std::pair<int, int>> moves;
@@ -88,7 +87,6 @@ public:
 
     // print
     void print();
-    void print_liberties();
 
     // file access
     std::vector<std::pair<int, int>> parseSGF(const std::string& filePath);

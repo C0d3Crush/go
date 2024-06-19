@@ -52,7 +52,6 @@ Board::Board(int size, std::vector<Node>& vect, int* c)
 
     nodes = vect;
     nodes.resize(size * size);
-    liberties.resize(size * size);
 
     for (int i = 0; i < size; i++)
     {
@@ -174,10 +173,6 @@ int Board::get_liberties(int x, int y)
     return count;
 }
 
-int Board::get_lib_amount(int index)
-{
-    return liberties[index];
-}
 int Board::get_moves_size()
 {
     return moves.size();
