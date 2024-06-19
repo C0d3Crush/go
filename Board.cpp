@@ -451,7 +451,7 @@ void Board::update_heads()
 
 bool Board::update()
 {   
-    std::cout << "move_count: " << move_count << ", cycle: "<< *cycle << std::endl; 
+    //std::cout << "move_count: " << move_count << ", cycle: "<< *cycle << std::endl; 
     if (move_count < *cycle)
         {
             int x = moves[move_count].first;
@@ -741,4 +741,3 @@ std::vector<std::pair<int, int>> Board::parseSGF(const std::string& filePath) {
     }
     return moves;
 }
-

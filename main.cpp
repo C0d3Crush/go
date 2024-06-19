@@ -16,14 +16,30 @@ int main (int argc, char** argv)
 
     std::vector<Node> nodes;
 
-    if (argc == 2)
-    {
-        cycle = atoi(argv[1]);
-    }
+    std::vector<Board> boards;
+    int boards_idx = 0;
 
     std::string file_path = "../data/sample.sgf";
-    Board board(9,nodes, file_path, &cycle);
 
+    boards.push_back(Board(9,nodes, file_path, &cycle));
+    boards.push_back(Board(9,nodes, &cycle));
+
+    Board* board = &boards[boards_idx];
+
+    if (argc == 1)
+    {
+        std::cout << "empty board:" << std::endl;
+        cycle = 0;
+        boards_idx = 1;
+    }
+    else if (argc == 2)
+    {
+        std::cout << "loaded board:" << std::endl;
+        cycle = board->get_moves_size();
+        boards_idx = 0;
+    }
+
+    //atoi(argv[1])
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) 
     {
@@ -72,13 +88,13 @@ int main (int argc, char** argv)
             }
             else if (e.type == SDL_MOUSEBUTTONDOWN) 
             {
-                if(board.get_up_to_date())
+                if(board->get_up_to_date())
                 {
-                    board.handle_mouse_click(e, &player, &cycle);
+                    board->handle_mouse_click(e, &player, &cycle);
                     //board.update(player);     
                 }
-                
             } 
+                
             else if (e.type == SDL_KEYDOWN) 
             {
                 switch (e.key.keysym.sym) {
@@ -86,7 +102,7 @@ int main (int argc, char** argv)
                         if (cycle > 0) cycle--;
                         break;
                     case SDLK_RIGHT:
-                        if (cycle < board.get_moves_size()) cycle++;
+                        if (cycle < board->get_moves_size()) cycle++;
                         break;
                     case SDLK_BACKSPACE:
                         break;
@@ -101,12 +117,12 @@ int main (int argc, char** argv)
             }
         }
 
-        board.update();
+        board->update();
         
         SDL_SetRenderDrawColor(renderer, 255, 204, 153, 255); 
         SDL_RenderClear(renderer);
 
-        board.draw(renderer);
+        board->draw(renderer);
 
         SDL_RenderPresent(renderer);
     }
