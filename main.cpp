@@ -2,25 +2,36 @@
 
 int main (int argc, char** argv)
 {
-    
+    int cycle = 0;
+    int move_count = 0;
+    char player = 'B';
     bool is_running = true;
 
     std::vector<Node> nodes;
-
-    int cycle = -1;
-
-    if (argc == 2)
+    std::vector<Board> boards;
+    
+    if (argc == 1 )
     {
-        cycle = atoi(argv[1]);
+        std::cout << "empty board:" << std::endl;
+        boards.push_back(Board(9, nodes));
     }
-
-    std::string file_path = "../data/sample.sgf";
-    Board board(9,nodes, file_path, &cycle);
+    else if (argc == 2)
+    {
+        std::cout << "loaded board:" << std::endl;
+        boards.push_back(Board(9,nodes, argv[1]));
+    }
+    else  
+    {
+        std::cerr << "Usage: " << argv[0] << "\n";
+        return 1;
+    }
+    
+    Board* board = &boards[0];
 
     while(is_running)
     {
-        is_running = board.update();
-        board.print();
+        is_running = board->update();
+        board->print();
     }
     
     std::cout << "terminated." << std::endl;

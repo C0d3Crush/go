@@ -14,7 +14,7 @@ private:
     int w, h;
     int s;
 
-    int* cycle;
+    int cycle;
     int move_count = 0;
 
     char player = 'B';
@@ -81,8 +81,8 @@ private:
     std::vector<std::pair<int, int>> parseSGF(const std::string& filePath);
 
 public:
-    Board(int size, std::vector<Node>& vect, const std::string file_path, int* c);
-    Board(int size, std::vector<Node>& vect, int* c);
+    Board(int size, std::vector<Node>& vect, const std::string file_path);
+    Board(int size, std::vector<Node>& vect);
 
     ~Board();
 
