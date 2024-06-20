@@ -2,21 +2,22 @@
 
 #include <iostream>
 
-File_manager::File_manager()
+File_manager::File_manager(const std::string& value)
 {
+    file_path = value;
 }
 
 File_manager::~File_manager()
 {
 }
 
-std::vector<std::pair<int, int>> File_manager::parseSGF(const std::string &filePath)
+std::vector<std::pair<int, int>> File_manager::parseSGF()
 {
     std::vector<std::pair<int, int>> moves;
 
-    std::ifstream file(filePath);
+    std::ifstream file(file_path);
     if (!file) {
-        std::cerr << "Failed to open SGF file: " << filePath << std::endl;
+        std::cerr << "Failed to open SGF file: " << file_path << std::endl;
         return moves;
     }
 

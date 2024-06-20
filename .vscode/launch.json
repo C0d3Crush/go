@@ -5,7 +5,7 @@
             "name": "Launch with CMake",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/a", // Path to your built executable
+            "program": "${workspaceFolder}/build/GoBoard", // Path to your built executable
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

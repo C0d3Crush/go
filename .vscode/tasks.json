@@ -1,42 +1,47 @@
 {
-    "version": "2.0.0",
-    "tasks": [
+    "version": "0.2.0",
+    "configurations": [
         {
-            "label": "CMake: build",
-            "command": "/Applications/CMake.app/Contents/bin/cmake",
-            "args": [
-                "--build",
-                "${workspaceFolder}/build"
+            "name": "Launch with CMake",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/GoBoard", // Path to your built executable
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
             ],
-            "type": "shell",
-            "group": "build",
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "detail": "Generated task by Debugger."
+            "preLaunchTask": "CMake: build",
+            "miDebuggerPath": "/usr/bin/gdb" // Example path to GDB on Linux
         },
         {
-            "type": "cppbuild",
-            "label": "C/C++: g++ Aktive Datei kompilieren",
-            "command": "/usr/bin/g++",
-            "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "${file}",
-                "-o",
-                "${fileDirname}/${fileBasenameNoExtension}"
+            "name": "Launch with g++",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}", // Path to your compiled file
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
             ],
-            "options": {
-                "cwd": "${fileDirname}"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "detail": "Vom Debugger generierte Aufgabe."
+            "preLaunchTask": "C/C++: g++ Active File Compile",
+            "miDebuggerPath": "/usr/bin/gdb" // Example path to GDB on Linux
         }
     ]
 }

@@ -5,11 +5,11 @@
 class File_manager
 {
 private:
-    /* data */
+    std::string file_path;
 public:
-    File_manager(/* args */);
+    File_manager(const std::string& file_path);
     ~File_manager();
 
-    std::vector<std::pair<int, int>> parseSGF(const std::string& filePath);
+    std::vector<std::pair<int, int>> parseSGF();
 
 };

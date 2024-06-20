@@ -41,7 +41,7 @@ bool SDLRenderer::handleEvents(Board* board, char* player)
         else if (e.type == SDL_MOUSEBUTTONDOWN) 
         {
             board->handle_mouse_click(e, player);
-            board->set_cycle(board->get_cycle() + 1);
+            //board->set_cycle(board->get_cycle() + 1);
         }
         else if (e.type == SDL_KEYDOWN) 
         {

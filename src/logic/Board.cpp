@@ -3,13 +3,15 @@
 // Constructor
 Board::Board(int size, std::vector<Node>& vect, const std::string file_path) 
 {
-    File_manager file_manager;
+    
     this->w = size;
     this->h = size;
     this->s = size * size;
 
     player = 'B';
-    moves = file_manager.parseSGF(file_path);
+
+    File_manager file_manager(file_path);
+    moves = file_manager.parseSGF();
 
     cycle = moves.size();
 
@@ -194,6 +196,7 @@ void Board::handle_mouse_click(const SDL_Event& e, char* player)
             if (nodes[index].get_player() == '.') 
             {
                 std::cout << cycle << std::endl;
+                cycle++;
                 moves.push_back({gridX, gridY});
             }
             else std::cout << "Cant place there. Space is ocupied." << std::endl;
@@ -467,7 +470,7 @@ void Board::update_heads()
 
 bool Board::update()
 {   
-    std::cout << "move_count: " << move_count << ", cycle: "<< cycle << std::endl; 
+    //std::cout << "move_count: " << move_count << ", cycle: "<< cycle << std::endl; 
     if (move_count < cycle)
         {
             int x = moves[move_count].first;
