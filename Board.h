@@ -101,11 +101,14 @@ public:
 
     bool update();
 
+    void set_cycle(int c);
+
+    int get_cycle();
     bool get_up_to_date();
     int get_moves_size();
 
     // visual interface 
-    void handle_mouse_click(const SDL_Event& e, char* player, int* cycle);
+    void handle_mouse_click(const SDL_Event& e, char* player);
 
 };
 

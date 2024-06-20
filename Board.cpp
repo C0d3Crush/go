@@ -144,7 +144,7 @@ void Board::draw_board(SDL_Renderer *renderer)
     }
 }
 
-void Board::handle_mouse_click(const SDL_Event& e, char* player, int* cycle) 
+void Board::handle_mouse_click(const SDL_Event& e, char* player) 
 {
     std::cout << ">>===== Handle Mouse =====<<" << std::endl;
     if (e.button.button == SDL_BUTTON_LEFT) 
@@ -190,8 +190,7 @@ void Board::handle_mouse_click(const SDL_Event& e, char* player, int* cycle)
 
             if (nodes[index].get_player() == '.') 
             {
-                std::cout << *cycle << std::endl;
-                *cycle = *cycle + 1;
+                std::cout << cycle << std::endl;
                 moves.push_back({gridX, gridY});
             }
             else std::cout << "Cant place there. Space is ocupied." << std::endl;
@@ -287,6 +286,11 @@ int Board::get_liberties(int x, int y)
 int Board::get_moves_size()
 {
     return moves.size();
+}
+
+int Board::get_cycle()
+{
+    return cycle;
 }
 
 bool Board::get_up_to_date()
@@ -508,6 +512,11 @@ bool Board::update()
             //print();
             return false;
         } 
+}
+
+void Board::set_cycle(int c)
+{
+    cycle = c;
 }
 
 /**

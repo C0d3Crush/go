@@ -84,8 +84,8 @@ int main (int argc, char** argv)
             {
                 if(board->get_up_to_date())
                 {
-                    board->handle_mouse_click(e, &player, &cycle);
-                    //board->update(player);     
+                    board->handle_mouse_click(e, &player);
+                    board->set_cycle(board->get_cycle() + 1);
                 }
                 
             } 
@@ -93,10 +93,10 @@ int main (int argc, char** argv)
             {
                 switch (e.key.keysym.sym) {
                     case SDLK_LEFT:
-                        if (cycle > 0) cycle--;
+                        if (board->get_cycle() > 0) board->set_cycle(board->get_cycle() - 1);
                         break;
                     case SDLK_RIGHT:
-                        if (cycle < board->get_moves_size()) cycle++;
+                        if (board->get_cycle() < board->get_moves_size()) board->set_cycle(board->get_cycle() + 1);
                         break;
                     case SDLK_BACKSPACE:
                         break;
