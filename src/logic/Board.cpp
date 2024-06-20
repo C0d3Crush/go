@@ -1,34 +1,6 @@
 #include "logic/Board.h"
 
 // Constructor
-Board::Board(int size, std::vector<Node>& vect, const std::string file_path) 
-{
-    
-    this->w = size;
-    this->h = size;
-    this->s = size * size;
-
-    player = 'B';
-
-    File_manager file_manager(file_path);
-    moves = file_manager.parseSGF();
-
-    cycle = moves.size();
-
-    nodes = vect;
-    nodes.resize(size * size);
-
-    for (int i = 0; i < size; i++)
-    {
-        for (int j = 0; j < size; j++) 
-        {
-            int index = get_index(j, i);
-            nodes[index].set_player('.');    
-            nodes[index].set_index(index);
-        }
-    }
-}
-
 
 Board::Board(int size, std::vector<Node>& vect)
 {

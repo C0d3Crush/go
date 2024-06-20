@@ -1,8 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "../file/File_manager.h"
-
 #include <vector>
 #include <string>
 #include <utility>
@@ -87,7 +85,6 @@ private:
     int remove_stones(Node* head);
 
 public:
-    Board(int size, std::vector<Node>& vect, const std::string file_path);
     Board(int size, std::vector<Node>& vect);
 
     ~Board();
