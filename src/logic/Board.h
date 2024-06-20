@@ -1,8 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "../file/File_manager.h"
-
 #include <vector>
 #include <string>
 #include <utility>

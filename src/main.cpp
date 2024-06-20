@@ -1,5 +1,4 @@
 #include "logic/Board.h"
-#include "ui/Sdl_renderer.h"
 
 const int WINDOW_WIDTH = 600;       
 const int WINDOW_HEIGHT = 600;
@@ -19,11 +18,13 @@ int main (int argc, char** argv)
         std::cout << "empty board:" << std::endl;
         boards.push_back(Board(9, nodes));
     }
+    /*
     else if (argc == 2)
     {
         std::cout << "loaded board:" << std::endl;
         boards.push_back(Board(9, nodes, argv[1]));
     }
+    */
     else
     {
         std::cerr << "Usage: " << argv[0] << "\n";
@@ -32,20 +33,10 @@ int main (int argc, char** argv)
 
     Board* board = &boards[0];
 
-    SDLRenderer renderer;
-    if (!renderer.init(WINDOW_WIDTH, WINDOW_HEIGHT))
+    while (board->update())
     {
-        return 1;
+        board->print();
     }
-
-    while (is_running)
-    {
-        is_running = renderer.handleEvents(board, &player);
-        board->update();
-        renderer.render(board);
-    }
-
-    renderer.cleanup();
 
     std::cout << "terminated." << std::endl;
     return 0;
