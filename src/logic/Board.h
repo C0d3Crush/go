@@ -1,10 +1,10 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "../file/File_manager.h"
+
 #include <vector>
 #include <string>
-#include <sstream>
-#include <fstream>
 #include <utility>
 
 #include <SDL2/SDL.h>
@@ -85,10 +85,6 @@ private:
 
     bool find_life(Node* head);
     int remove_stones(Node* head);
-
-    // file access
-    std::vector<std::pair<int, int>> parseSGF(const std::string& filePath);
-
 
 public:
     Board(int size, std::vector<Node>& vect, const std::string file_path);

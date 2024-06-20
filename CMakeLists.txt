@@ -6,7 +6,21 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Add the executable
-add_executable(a main.cpp Board.cpp Node.cpp)
+add_executable(GoBoard
+    src/main.cpp
+    src/logic/board.cpp
+    src/logic/node.cpp
+    src/ui/sdl_renderer.cpp
+    src/file/file_manager.cpp
+)
+
+# Include directories
+target_include_directories(GoBoard PRIVATE
+    ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/src/logic
+    ${PROJECT_SOURCE_DIR}/src/ui
+    ${PROJECT_SOURCE_DIR}/src/file
+)
 
 # Find SDL2
 find_package(SDL2 REQUIRED)
@@ -14,5 +28,5 @@ find_package(SDL2 REQUIRED)
 # Include SDL2 headers
 include_directories(${SDL2_INCLUDE_DIRS})
 
-# Link SDL2 and SDL2_ttf libraries
-target_link_libraries(a ${SDL2_LIBRARIES})
+# Link SDL2 libraries
+target_link_libraries(GoBoard ${SDL2_LIBRARIES})
