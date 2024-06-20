@@ -41,9 +41,9 @@ private:
     std::string white_player; 
 
     // for drawing 
-    void draw_stones(SDL_Renderer *renderer);
-    void draw_square(SDL_Renderer *renderer, int centerX, int centerY, int radius);
-    void draw_board(SDL_Renderer *renderer);
+    //void draw_stones(SDL_Renderer *renderer);
+    //void draw_square(SDL_Renderer *renderer, int centerX, int centerY, int radius);
+    //void draw_board(SDL_Renderer *renderer);
 
     // for update
     void update_cycle(char player);
@@ -97,7 +97,6 @@ public:
     ~Board();
 
     void print();
-    void draw(SDL_Renderer *renderer);
 
     bool update();
 
@@ -108,7 +107,7 @@ public:
     int get_moves_size();
 
     // visual interface 
-    void handle_mouse_click(const SDL_Event& e, char* player);
+    //void handle_mouse_click(const SDL_Event& e, char* player);
 
 };
 
