@@ -66,7 +66,7 @@ int main (int argc, char** argv)
         -1,
         SDL_RENDERER_ACCELERATED
     );
-    
+
     if (!renderer) 
     {
         std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
@@ -74,6 +74,7 @@ int main (int argc, char** argv)
         SDL_Quit();
         return 1;
     }
+    
     SDL_Event e;
     while(is_running)
     {
@@ -86,24 +87,24 @@ int main (int argc, char** argv)
             {
                 if(board->get_up_to_date())
                 {
-                    board->handle_mouse_click(e, &player, cycle);
-                    //board.update(player);     
+                    board->handle_mouse_click(e, &player);
+                    board->set_cycle(board->get_cycle() + 1);
                 }
-            } 
                 
+            } 
             else if (e.type == SDL_KEYDOWN) 
             {
                 switch (e.key.keysym.sym) {
                     case SDLK_LEFT:
-                        if (cycle > 0) cycle--;
+                        if (board->get_cycle() > 0) board->set_cycle(board->get_cycle() + 1);
                         break;
                     case SDLK_RIGHT:
-                        if (cycle < board->get_moves_size()) cycle++;
+                        if (cycle < board->get_moves_size()) board->set_cycle(board->get_cycle() + 1);
                         break;
                     case SDLK_BACKSPACE:
                         break;
                     case SDLK_r:
-                        //board.reset();
+                        //board->reset();
                         //cycle = 0;
                         break;
                     case SDLK_q:
@@ -123,9 +124,8 @@ int main (int argc, char** argv)
         SDL_RenderPresent(renderer);
     }
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    board->print();
+
     
     std::cout << "terminated." << std::endl;
 
