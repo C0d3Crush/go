@@ -1,16 +1,23 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "file/File_manager.h"
+
 #include <vector>
 #include <string>
-#include <sstream>
-#include <fstream>
 #include <utility>
+
+#include <SDL2/SDL.h>
 
 #include "Node.h"
 
 class Board {
 private:
+
+    const int WINDOW_WIDTH = 600;       
+    const int WINDOW_HEIGHT = 600;
+    const int BOARD_MARGIN = 30;
+
     int w, h;
     int s;
 
@@ -25,7 +32,6 @@ private:
 
     std::vector<std::pair<int, int>> moves;
 
-
     Node* ko;
 
     float komi; 
@@ -33,6 +39,11 @@ private:
     std::string result; 
     std::string black_player;
     std::string white_player; 
+
+    // for drawing 
+    void draw_stones(SDL_Renderer *renderer);
+    void draw_square(SDL_Renderer *renderer, int centerX, int centerY, int radius);
+    void draw_board(SDL_Renderer *renderer);
 
     // for update
     void update_cycle(char player);
@@ -62,8 +73,6 @@ private:
     int get_y(int index);
 
     int get_liberties(int x, int y);
-    int get_moves_size();
-    bool get_up_to_date();
 
     std::vector<Node*> get_group(Node* head);  // this one is aperently super epic!
     
@@ -77,9 +86,6 @@ private:
     bool find_life(Node* head);
     int remove_stones(Node* head);
 
-    // file access
-    std::vector<std::pair<int, int>> parseSGF(const std::string& filePath);
-
 public:
     Board(int size, std::vector<Node>& vect, const std::string file_path);
     Board(int size, std::vector<Node>& vect);
@@ -87,9 +93,19 @@ public:
     ~Board();
 
     void print();
-    // void draw();
+    void draw(SDL_Renderer *renderer);
 
     bool update();
+
+    void set_cycle(int c);
+
+    int get_cycle();
+    bool get_up_to_date();
+    int get_moves_size();
+
+    // visual interface 
+    void handle_mouse_click(const SDL_Event& e, char* player);
+
 };
 
 #endif // GAME_H

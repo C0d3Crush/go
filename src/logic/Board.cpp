@@ -1,18 +1,19 @@
-#include "Board.h"
+#include "logic/Board.h"
 
 // Constructor
 Board::Board(int size, std::vector<Node>& vect, const std::string file_path) 
 {
+    
     this->w = size;
     this->h = size;
     this->s = size * size;
 
     player = 'B';
-    moves = parseSGF(file_path);
+
+    File_manager file_manager(file_path);
+    moves = file_manager.parseSGF();
+
     cycle = moves.size();
-
-
-    if (cycle == -1) cycle = moves.size();
 
     nodes = vect;
     nodes.resize(size * size);
@@ -28,11 +29,14 @@ Board::Board(int size, std::vector<Node>& vect, const std::string file_path)
     }
 }
 
-Board::Board(int size, std::vector<Node>& vect) 
+
+Board::Board(int size, std::vector<Node>& vect)
 {
     this->w = size;
     this->h = size;
     this->s = size * size;
+
+
 
     player = 'B';
     moves = {
@@ -50,7 +54,6 @@ Board::Board(int size, std::vector<Node>& vect)
 
     cycle = moves.size();
 
-    if (cycle == -1) cycle = moves.size();
 
     nodes = vect;
     nodes.resize(size * size);
@@ -69,29 +72,144 @@ Board::Board(int size, std::vector<Node>& vect)
 // Destructor
 Board::~Board() {}
 
-void Board::update_cycle(char player)
+void Board::draw(SDL_Renderer *renderer)
 {
-    update_groups();
-    update_liberties();
-    update_heads();
-
-    if (player == 'W') {player = 'B';}
-    else {player = 'W';}
-
-    update_life(player);
-
-    if (player == 'W') {player = 'B';}
-    else {player = 'W';}
-
-    update_groups();
-    update_liberties();
-    update_heads();
-
-    update_life (player);
-
+    draw_board(renderer);
+    draw_stones(renderer);
 }
 
-int Board::get_index(int x, int y) {
+void Board::draw_stones(SDL_Renderer *renderer)
+{
+
+    int cellSize = (WINDOW_WIDTH - 2 * BOARD_MARGIN) / (w - 1);
+    int radius = cellSize / 2;
+
+    for (int i = 0; i < s; i++)
+    {
+        Node* node = &nodes[i];//get_node(i);
+
+        if (node->get_player() == '.') continue;
+
+        int x = cellSize * (get_x(i)) + BOARD_MARGIN;
+        int y = cellSize * (get_y(i)) + BOARD_MARGIN;
+
+        //std::cout<<"test:"<<"x: "<<x<<" y: "<<y<<std::endl;
+        if (node->get_player() == 'B') 
+        { 
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        } 
+        else 
+        {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        }
+        draw_square(renderer, x, y, radius);
+    }
+}
+
+void Board::draw_square(SDL_Renderer *renderer, int centerX, int centerY, int radius)
+{
+
+    int squareSize = radius * 2; // Square size is double the radius
+
+    // Calculate the coordinates of the square's top-left corner
+    int startX = centerX - (squareSize / 2);
+    int startY = centerY - (squareSize / 2);
+
+    // Draw the square
+    SDL_Rect squareRect = { startX, startY, squareSize, squareSize };
+    SDL_RenderFillRect(renderer, &squareRect);
+}
+
+void Board::draw_board(SDL_Renderer *renderer)
+{
+    //int boardSize = s;
+
+    int cellSize = (WINDOW_WIDTH - 2 * BOARD_MARGIN) / (w - 1);
+    
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    
+    for (int i = 0; i < w; ++i) 
+    {
+        SDL_RenderDrawLine
+        (
+            renderer, 
+            BOARD_MARGIN, 
+            BOARD_MARGIN + i * cellSize, 
+            WINDOW_WIDTH - BOARD_MARGIN, 
+            BOARD_MARGIN + i * cellSize
+        );
+        SDL_RenderDrawLine
+        (
+            renderer, 
+            BOARD_MARGIN + i * cellSize, 
+            BOARD_MARGIN, 
+            BOARD_MARGIN + i * cellSize, 
+            WINDOW_WIDTH - BOARD_MARGIN
+        );
+    }
+}
+
+void Board::handle_mouse_click(const SDL_Event& e, char* player) 
+{
+    std::cout << ">>===== Handle Mouse =====<<" << std::endl;
+    if (e.button.button == SDL_BUTTON_LEFT) 
+    {
+        // Capture raw mouse coordinates
+        int mouseX = e.button.x;
+        int mouseY = e.button.y;
+
+        // Calculate cell size
+        int boardWidth = width();
+        int boardHeight = height();
+        int cellSize = (WINDOW_WIDTH - BOARD_MARGIN * 2) / boardWidth;
+
+        // Adjust mouse coordinates by subtracting the board's margin
+        int adjustedMouseX = mouseX - BOARD_MARGIN;
+        int adjustedMouseY = mouseY - BOARD_MARGIN;
+
+        // Ensure adjusted coordinates are within valid range
+        if (adjustedMouseX < 0 || adjustedMouseX >= (boardWidth * cellSize) || 
+            adjustedMouseY < 0 || adjustedMouseY >= (boardHeight * cellSize)) {
+            std::cout << "Mouse coordinates out of board bounds!" << std::endl;
+            return;
+        }
+
+        // Convert adjusted mouse coordinates to grid coordinates with rounding
+        int gridX = adjustedMouseX / cellSize;
+        int gridY = adjustedMouseY / cellSize;
+
+        // Ensure grid coordinates are within board dimensions
+        if (gridX >= boardWidth) gridX = boardWidth - 1;
+        if (gridY >= boardHeight) gridY = boardHeight - 1;
+
+        // Ensure the calculated grid position is within the board limits
+        if (gridX >= 0 && gridX < size() && gridY >= 0 && gridY < size()) 
+        {
+            int index = get_index(gridX, gridY);
+
+            std::cout << "index: " <<index << " player at coords: " << nodes[index].get_player() << std::endl;
+            
+            std::cout << "(" << gridX << "; " << gridY << ")" << std::endl;
+
+            std::cout << "(" << get_x(index) << "; "<< get_y(index) << ")"<< std::endl;
+
+            if (nodes[index].get_player() == '.') 
+            {
+                std::cout << cycle << std::endl;
+                cycle++;
+                moves.push_back({gridX, gridY});
+            }
+            else std::cout << "Cant place there. Space is ocupied." << std::endl;
+        }
+        else
+        {
+            std::cout << "Click out of board boundaries!" << std::endl;
+        }
+    }
+}
+
+int Board::get_index(int x, int y)
+{
     return (y * h) + x;
 }
 
@@ -176,11 +294,15 @@ int Board::get_moves_size()
     return moves.size();
 }
 
+int Board::get_cycle()
+{
+    return cycle;
+}
+
 bool Board::get_up_to_date()
 {
     return (move_count == cycle);
 }
-
 
 void Board::build_dfs(const int index)
 {
@@ -348,7 +470,7 @@ void Board::update_heads()
 
 bool Board::update()
 {   
-    std::cout << "move_count: " << move_count << ", cycle: "<< cycle << std::endl; 
+    //std::cout << "move_count: " << move_count << ", cycle: "<< cycle << std::endl; 
     if (move_count < cycle)
         {
             int x = moves[move_count].first;
@@ -392,8 +514,15 @@ bool Board::update()
         }
         if (cycle == move_count)
         {
+            //std::cout << "up to date" << std::endl;
+            //print();
             return false;
         } 
+}
+
+void Board::set_cycle(int c)
+{
+    cycle = c;
 }
 
 /**
@@ -470,6 +599,29 @@ void Board::print_coords(int index)
     std::cout << "coords: (" << get_x(index) << ";" << get_y(index) << ")" << std::endl; 
 }
 
+void Board::update_cycle(char player)
+{
+
+    update_groups();
+    update_liberties();
+    update_heads();
+
+    if (player == 'W') {player = 'B';}
+    else {player = 'W';}
+
+    update_life(player);
+
+    if (player == 'W') {player = 'B';}
+    else {player = 'W';}
+
+    update_groups();
+    update_liberties();
+    update_heads();
+
+    update_life (player);
+
+}
+
 void Board::update_groups()
 {
     reset_children();
@@ -496,8 +648,6 @@ void Board::update_liberties()
         }
     }
 }
-
-
 
 void Board::update_life(char player)
 {
@@ -551,68 +701,3 @@ int Board::remove_stones(Node *head)
 
     return dead_stones.size();
 }
-
-std::vector<std::pair<int, int>> Board::parseSGF(const std::string& filePath) {
-    std::vector<std::pair<int, int>> moves;
-
-    std::ifstream file(filePath);
-    if (!file) {
-        std::cerr << "Failed to open SGF file: " << filePath << std::endl;
-        return moves;
-    }
-
-    std::string line;
-    while (std::getline(file, line)) {
-        if (line.find("SZ[") != std::string::npos) {
-            int startPos = line.find("SZ[") + 3;
-            int endPos = line.find("]", startPos);
-            int boardSize = std::stoi(line.substr(startPos, endPos - startPos));
-            std::cout << "Board Size: " << boardSize << std::endl;
-        } else if (line.find("KM[") != std::string::npos) {
-            int startPos = line.find("KM[") + 3;
-            int endPos = line.find("]", startPos);
-            float komi = std::stof(line.substr(startPos, endPos - startPos));
-            std::cout << "Komi: " << komi << std::endl;
-        } else if (line.find("RU[") != std::string::npos) {
-            int startPos = line.find("RU[") + 3;
-            int endPos = line.find("]", startPos);
-            std::string ruleset = line.substr(startPos, endPos - startPos);
-            std::cout << "Ruleset: " << ruleset << std::endl;
-        } else if (line.find("RE[") != std::string::npos) {
-            int startPos = line.find("RE[") + 3;
-            int endPos = line.find("]", startPos);
-            std::string result = line.substr(startPos, endPos - startPos);
-            std::cout << "Result: " << result << std::endl;
-        } else if (line.find("PB[") != std::string::npos) {
-            int startPos = line.find("PB[") + 3;
-            int endPos = line.find("]", startPos);
-            std::string blackPlayer = line.substr(startPos, endPos - startPos);
-            std::cout << "Black Player: " << blackPlayer << std::endl;
-        } else if (line.find("PW[") != std::string::npos) {
-            int startPos = line.find("PW[") + 3;
-            int endPos = line.find("]", startPos);
-            std::string whitePlayer = line.substr(startPos, endPos - startPos);
-            std::cout << "White Player: " << whitePlayer << std::endl;
-        } else if (line.find(";B[") != std::string::npos || line.find(";W[") != std::string::npos) {
-            size_t pos = 0;
-            while ((pos = line.find(";")) != std::string::npos) {
-                std::string move = line.substr(pos + 1, 5); // Expecting format like "B[ab]"
-                line.erase(0, pos + 6); // Erase up to the next move
-
-                if (move.size() >= 4 && (move[0] == 'B' || move[0] == 'W')) {
-                    char player = move[0];
-                    char x = move[2];
-                    char y = move[3];
-                    if (x == ']' || y == ']') {
-                        // Pass move
-                        moves.push_back({-1, -1});
-                    } else {
-                        moves.push_back({x - 'a', y - 'a'});
-                    }
-                }
-            }
-        }
-    }
-    return moves;
-}
-
