@@ -58,11 +58,6 @@ private:
     void reset_parent();
     void reset();
 
-    // for testing
-    void print_heads();
-    void print_groups();
-    void print_coords(int index);
-
     // access function
     int size();
     int width();
@@ -79,9 +74,9 @@ private:
     int add_move(int x, int y, char player);
 
     // dfs operations    
-    void build_dfs(int index);
+    bool build_dfs(int index);
     bool dfs_life(Node* head);
-    void dfs_group(Node* head, std::vector<Node*> *nodes);
+    bool dfs_group(Node* head, std::vector<Node*> *nodes);
 
     bool find_life(Node* head);
     int remove_stones(Node* head);
@@ -106,6 +101,11 @@ public:
     // visual interface 
     void handle_mouse_click(const SDL_Event& e, char* player);
 
+
+    // for testing
+    void print_heads();
+    void print_groups();
+    void print_coords(int index);
 };
 
 #endif // GAME_H
