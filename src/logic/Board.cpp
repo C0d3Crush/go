@@ -275,80 +275,89 @@ bool Board::get_up_to_date()
 {
     return (move_count == cycle);
 }
-
-void Board::build_dfs(const int index)
+bool Board::build_dfs(const int index)
 {
+    int child_count = 0;
+    if (nodes[index].get_player() == '.') return 0;
+    if (nodes[index].get_visited()) return 0;
 
-    if (nodes[index].get_player() == '.') return;
-    if (nodes[index].get_visited()) return;
-
-    int x = index / w;
-    int y = index % h;
+    int x = get_x(index);  // Changed from w to index
+    int y = get_y(index);  // Changed from h to index
 
     Node* node = (&nodes[index]);
     node->set_visited(true);
 
-    // check seperaly for out of bounds
-    
-    //up
-    if (y >= 0) 
+    // check separately for out of bounds
+
+    // Up
+    if (y > 0) 
     {
-        Node* node_up;
         int index_up = index - w;
-        node_up = (&nodes[index_up]);
+        Node* node_up = (&nodes[index_up]);
 
         if (node_up->get_player() == node->get_player())
         {
-            node->add_child(node_up, 0);
-            node_up->add_parent(node);
-            build_dfs(index_up);
+            if (build_dfs(index_up))
+            {
+                node->add_child(node_up, 0);
+                node_up->add_parent(node);
+                child_count++;
+            }
         }
     }
 
-    //Down
+    // Down
     if (y < h - 1) 
     {
-        Node* node_down;
         int index_down = index + w;
-        node_down = (&nodes[index_down]);
+        Node* node_down = (&nodes[index_down]);
 
         if (node_down->get_player() == node->get_player())
         {
-            node->add_child(node_down, 2);
-            node_down->add_parent(node);
-            build_dfs(index_down);
+            if (build_dfs(index_down))
+            {
+                node->add_child(node_down, 2);
+                node_down->add_parent(node);
+                child_count++;
+            }
         }
     }
 
-    //Left 
-    if (x >= 0)
+    // Left 
+    if (x > 0)
     {
-        Node* node_left;
         int index_left = index - 1;
-        node_left = (&nodes[index_left]);
+        Node* node_left = (&nodes[index_left]);
 
         if (node_left->get_player() == node->get_player()) 
         {
-            node->add_child(node_left, 3);
-            node_left->add_parent(node);
-            build_dfs(index_left);
+            if (build_dfs(index_left))
+            {
+                node->add_child(node_left, 3);
+                node_left->add_parent(node);
+                child_count++;
+            }
         }
     }
 
-    //Right
-    if(x < w - 1)
+    // Right
+    if (x < w - 1)
     {
-        Node* node_right;
         int index_right = index + 1;
-        node_right = (&nodes[index_right]);
+        Node* node_right = (&nodes[index_right]);
 
         if (node_right->get_player() == node->get_player())
         {
-            node->add_child(node_right, 1);
-            node_right->add_parent(node);
-            build_dfs(index_right);
+            if (build_dfs(index_right))
+            {
+                node->add_child(node_right, 1);
+                node_right->add_parent(node);
+                child_count++;
+            }
         }
     }
+
+    return 1;
 }
 
 bool Board::dfs_life(Node *head)
@@ -414,7 +423,7 @@ void Board::reset_stones()
 void Board::print()
 {   
     std::cout << "board" << std::endl;
-    std::cout << "_01234678" << std::endl;
+    std::cout << "_012345678" << std::endl;
     for (int i = 0; i < h; i++)
     {
         std::cout<<i;
@@ -512,12 +521,11 @@ std::vector<Node*> Board::get_group(Node* head)
     return nodes;
 }
 
-void Board::dfs_group(Node *head, std::vector<Node *> *nodes)
+bool Board::dfs_group(Node *head, std::vector<Node *> *nodes)
 {
-    if (head->get_visited()) return;
+    if (head->get_visited()) return 0;
 
     head->set_visited(true);
-
     nodes->push_back(head);
 
     for (int i = 0; i < 4; i++)
@@ -525,47 +533,65 @@ void Board::dfs_group(Node *head, std::vector<Node *> *nodes)
         Node* child = head->get_child(i);
         if (!(child == nullptr))
         {
-            dfs_group(child, nodes);
-        }
-    }
-}
-
-
-void Board::print_heads()
-{
-    std::cout << "heads:"<<std::endl;
-    for ( auto h : heads) 
-    {
-        int index = h->get_index();
-        std::cout << "(" << get_x(index) << ";" << get_y(index) << ")"<< std::endl;
-    }
-    std::cout << std::endl;
-}
-
-void Board::print_groups()
-{
-    std::cout << "groups:" << std::endl;
-    reset_visited();
-    for(int k = 0; k < nodes.size(); k++ )
-    {
-        if (!(nodes[k].get_player() == '.') && !(nodes[k].get_visited()))
-        {
-            std::vector<Node*> vect = get_group(&nodes[k]);
-
-            std::cout << "Printing " << "(" <<get_x(k)<< "; " << get_y(k) << ")"  << "-tree, colour: " << nodes[k].get_player()<<std::endl;
-
-            for (int l = 0; l < vect.size(); l++) 
+            if (dfs_group(child, nodes))
             {
-                std::cout << "(" <<get_x(vect[l]->get_index())<< "; " << get_y(vect[l]->get_index()) << ")" << std::endl;
+
             }
         }
     }
 }
 
+void Board::print_heads()
+{
+    std::cout << "Tree:" << std::endl;
+    for (Node* head : heads) {
+        head->print_tree();
+    }
+}
+
+void Board::print_groups()
+{
+    std::cout << "Groups:" << std::endl;
+    
+    for (auto h : heads)
+    {
+        std::cout << "head: " << h->get_player() << " ";
+        print_coords(h->get_index());
+
+        std::vector<Node*>group = get_group(h); 
+        for (int i = 0; i < group.size(); i++)
+        {
+            std::cout << "stone["<<i<<"]: " << group[i]->get_player()<< " ";
+            print_coords(group[i]->get_index());
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+
+    /*
+    reset_visited();
+    for (int k = 0; k < nodes.size(); k++)
+    {
+        //nodes[k].set_visited(true);
+        if (nodes[k].get_player() != '.' && !nodes[k].get_visited())
+        {
+            std::vector<Node*> group = get_group(&nodes[k]);
+            std::cout << "Group starting at (" << get_x(k) << ", " << get_y(k) << "), Color: " << nodes[k].get_player() << std::endl;
+
+            for (const auto& node : group) 
+            {
+                int index = node->get_index();
+                std::cout << "  ├── (" << get_x(index) << ", " << get_y(index) << ")" << std::endl;
+            }
+        }
+    }
+    std::cout << std::endl;
+    */
+}
+
 void Board::print_coords(int index)
 {
-
-    std::cout << "coords: (" << get_x(index) << ";" << get_y(index) << ")" << std::endl; 
+    std::cout << "Coords: (" << get_x(index) << ", " << get_y(index) << ")" << std::endl; 
 }
 void Board::update_cycle(char player)
 {

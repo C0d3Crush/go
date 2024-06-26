@@ -55,6 +55,10 @@ public:
     // for testing 
     void print_children(std::vector<int>& vect);
 
+    // Print tree method
+    void print_tree(int depth = 0) const;
+
+
 private:
     char player;
     //std::vector<std::shared_ptr<Node>> children;
@@ -66,6 +70,8 @@ private:
     bool visited;
     int index;
     int liberties;
+
+    void print_indent(int depth) const;
 
 };
 
