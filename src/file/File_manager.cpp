@@ -2,16 +2,16 @@
 
 #include <iostream>
 
-File_manager::File_manager(const std::string& value)
+File_manager::File_manager()
 {
-    file_path = value;
+    
 }
 
 File_manager::~File_manager()
 {
 }
 
-std::vector<std::pair<int, int>> File_manager::parseSGF()
+std::vector<std::pair<int, int>> File_manager::parseSGF(const std::string& file_path)
 {
     std::vector<std::pair<int, int>> moves;
 

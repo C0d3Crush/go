@@ -48,8 +48,8 @@ int main (int argc, char** argv)
         board->print_groups();
         renderer.render(board);
         
-        std::cout << "continu";
-        std::cin >> is_running;
+        //std::cout << "continu";
+        //std::cin >> is_running;
     }
 
     renderer.cleanup();

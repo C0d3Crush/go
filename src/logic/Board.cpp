@@ -10,8 +10,8 @@ Board::Board(int size, std::vector<Node>& vect, const std::string file_path)
 
     player = 'B';
 
-    File_manager file_manager(file_path);
-    moves = file_manager.parseSGF();
+    File_manager file_manager;
+    moves = file_manager.parseSGF(file_path);
 
     cycle = moves.size();
 
@@ -557,6 +557,7 @@ bool Board::update()
         }
         if (cycle == move_count)
         {
+            /*
             // ask user to input a move
             int x, y;
             std::cout << "player " << player << " enter move:" << std::endl;
@@ -568,6 +569,8 @@ bool Board::update()
             moves.push_back({x, y});     
             cycle++;       
 
+            */
+            
             return true;
         } 
 }
