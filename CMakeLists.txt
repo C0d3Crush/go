@@ -9,7 +9,7 @@ add_executable(GoBoard
     src/main.cpp
     src/logic/board.cpp
     src/logic/node.cpp
-    src/ui/SDL_renderer.cpp  # Add SDLRenderer.cpp here
+    #src/ui/SDL_renderer.cpp  # Add SDLRenderer.cpp here
     src/file/File_manager.cpp  # Add File_manager.cpp here
 )
 

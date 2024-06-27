@@ -239,6 +239,30 @@ int Board::height()
     return h;
 }
 
+int Board::get_komi()
+{
+    return komi;
+}
+
+std::string Board::get_ruleset()
+{
+    return ruleset;
+}
+
+std::string Board::get_result()
+{
+    return result;
+}
+
+std::string Board::get_white_player()
+{
+    return white_player;
+}
+
+std::string Board::get_black_player()
+{
+    return black_player;
+}
 
 int Board::add_move(int x, int y, char p)
 {
@@ -291,6 +315,11 @@ int Board::get_liberties(int x, int y)
 int Board::get_moves_size()
 {
     return moves.size();
+}
+
+std::vector<std::pair<int, int>> Board::get_moves()
+{
+    return moves;
 }
 
 int Board::get_cycle()

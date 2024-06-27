@@ -1,5 +1,7 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef BOARD_H
+#define BOARD_H
+
+#include "file/File_manager.h"
 
 #include <vector>
 #include <string>
@@ -61,11 +63,6 @@ private:
     
     void reset_stones();
 
-    // access function
-    int size();
-    int width();
-    int height();
-
     int get_index(int x, int y);
     int get_x(int index);
     int get_y(int index);
@@ -101,6 +98,19 @@ public:
     int get_cycle();
     bool get_up_to_date();
     int get_moves_size();
+    std::vector<std::pair<int, int>> get_moves();
+
+
+    // access function
+    int size();
+    int width();
+    int height();
+    int get_komi();
+    std::string get_ruleset();
+    std::string get_result();
+    std::string get_white_player();
+    std::string get_black_player();
+    
 
     // visual interface 
     void handle_mouse_click(const SDL_Event& e, char* player);
@@ -112,4 +122,4 @@ public:
     void print_coords(int index);
 };
 
-#endif // GAME_H
+#endif // BOARD_H
