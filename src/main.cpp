@@ -36,6 +36,9 @@ int main (int argc, char** argv)
     while (board->update())
     {
         board->print();
+
+        std::cout << "continu";
+        std::cin >> is_running;
     }
 
     std::cout << "terminated." << std::endl;
