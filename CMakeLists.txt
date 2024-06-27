@@ -10,14 +10,20 @@ add_executable(GoBoard
     src/main.cpp
     src/logic/board.cpp
     src/logic/node.cpp
+<<<<<<< HEAD
     src/file/file_manager.cpp 
+=======
+>>>>>>> main
 )
 
 # Include directories
 target_include_directories(GoBoard PRIVATE
     ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_SOURCE_DIR}/src/logic
+<<<<<<< HEAD
     ${PROJECT_SOURCE_DIR}/src/file
+=======
+>>>>>>> main
 )
 
 # Find SDL2

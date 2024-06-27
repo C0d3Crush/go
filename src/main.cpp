@@ -18,11 +18,13 @@ int main (int argc, char** argv)
         std::cout << "empty board:" << std::endl;
         boards.push_back(Board(9, nodes));
     }
+    /*
     else if (argc == 2)
     {
         std::cout << "loaded board:" << std::endl;
         boards.push_back(Board(9, nodes, argv[1]));
     }
+    */
     else
     {
         std::cerr << "Usage: " << argv[0] << "\n";

@@ -189,3 +189,27 @@ bool Node::is_head() const
 }
 
 */
+
+void Node::print_indent(int depth) const {
+    for (int i = 0; i < depth; ++i) {
+        std::cout << "  "; // Two spaces per depth level for indentation
+    }
+}
+
+void Node::print_tree(int depth) const {
+    print_indent(depth);
+    std::cout << "Node(" << player << ")\n";
+
+    if (children.up) {
+        children.up->print_tree(depth + 1);
+    }
+    if (children.right) {
+        children.right->print_tree(depth + 1);
+    }
+    if (children.down) {
+        children.down->print_tree(depth + 1);
+    }
+    if (children.left) {
+        children.left->print_tree(depth + 1);
+    }
+}

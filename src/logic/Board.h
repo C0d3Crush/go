@@ -47,21 +47,19 @@ private:
 
     // for update
     void update_cycle(char player);
-    void update_groups();
-    void update_liberties();
+    void update_trees();
+    void update_liberties(int x, int y);
     void update_life(char player);
     void update_heads();
 
     // reset
-    void reset_visited();
+    void reset_tree();
     void reset_children();
     void reset_parent();
-    void reset();
 
-    // for testing
-    void print_heads();
-    void print_groups();
-    void print_coords(int index);
+    void reset_visited();
+    
+    void reset_stones();
 
     // access function
     int size();
@@ -79,15 +77,15 @@ private:
     int add_move(int x, int y, char player);
 
     // dfs operations    
-    void build_dfs(int index);
+    bool build_dfs(int index);
     bool dfs_life(Node* head);
-    void dfs_group(Node* head, std::vector<Node*> *nodes);
+    bool dfs_group(Node* head, std::vector<Node*> *nodes);
 
     bool find_life(Node* head);
     int remove_stones(Node* head);
 
 public:
-    Board(int size, std::vector<Node>& vect, const std::string file_path);
+    //Board(int size, std::vector<Node>& vect, const std::string file_path);
     Board(int size, std::vector<Node>& vect);
 
     ~Board();
@@ -106,6 +104,11 @@ public:
     // visual interface 
     void handle_mouse_click(const SDL_Event& e, char* player);
 
+
+    // for testing
+    void print_heads();
+    void print_groups();
+    void print_coords(int index);
 };
 
 #endif // GAME_H
