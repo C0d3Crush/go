@@ -1,4 +1,5 @@
 #include "logic/Board.h"
+#include "Board.h"
 
 // Constructor
 Board::Board(int size, std::vector<Node>& vect, const std::string file_path) 
@@ -598,33 +599,12 @@ void Board::print_groups()
         std::cout << std::endl;
     }
     std::cout << std::endl;
-
-    /*
-    reset_visited();
-    for (int k = 0; k < nodes.size(); k++)
-    {
-        //nodes[k].set_visited(true);
-        if (nodes[k].get_player() != '.' && !nodes[k].get_visited())
-        {
-            std::vector<Node*> group = get_group(&nodes[k]);
-            std::cout << "Group starting at (" << get_x(k) << ", " << get_y(k) << "), Color: " << nodes[k].get_player() << std::endl;
-
-            for (const auto& node : group) 
-            {
-                int index = node->get_index();
-                std::cout << "  ├── (" << get_x(index) << ", " << get_y(index) << ")" << std::endl;
-            }
-        }
-    }
-    std::cout << std::endl;
-    */
 }
 
 void Board::print_coords(int index)
 {
     std::cout << "Coords: (" << get_x(index) << ", " << get_y(index) << ")" << std::endl; 
 }
-
 
 
 void Board::update_cycle(char player)
