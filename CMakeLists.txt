@@ -8,22 +8,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Add the executable
 add_executable(GoBoard
     src/main.cpp
-    src/logic/board.cpp
-    src/logic/node.cpp
-<<<<<<< HEAD
-    src/file/file_manager.cpp 
-=======
->>>>>>> main
+    src/logic/Board.cpp
+    src/logic/Node.cpp
+    src/file/File_manager.cpp 
 )
 
 # Include directories
 target_include_directories(GoBoard PRIVATE
     ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_SOURCE_DIR}/src/logic
-<<<<<<< HEAD
     ${PROJECT_SOURCE_DIR}/src/file
-=======
->>>>>>> main
 )
 
 # Find SDL2

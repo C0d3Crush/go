@@ -1,5 +1,5 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef BOARD_H
+#define BOARD_H
 
 #include "file/File_manager.h"
 
@@ -119,4 +119,4 @@ public:
     void print_coords(int index);
 };
 
-#endif // GAME_H
+#endif // BOARD_H

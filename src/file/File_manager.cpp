@@ -75,8 +75,9 @@ std::vector<std::pair<int, int>> File_manager::parseSGF()
     }
     return moves;
 }
-void File_manager::saveSGF(const std::string& file_path, Board* board)
-{
+void File_manager::saveSGF(const std::string& file_path, int board_size, float komi, const std::string& ruleset,
+                           const std::string& result, const std::string& black_player, const std::string& white_player,
+                           const std::vector<std::pair<int, int>>& moves) {
     std::ofstream file(file_path);
     if (!file) {
         std::cerr << "Failed to open SGF file for writing: " << file_path << std::endl;
@@ -84,16 +85,16 @@ void File_manager::saveSGF(const std::string& file_path, Board* board)
     }
 
     // Write game properties
-    file << "(;SZ[" << board->size() << "]" << std::endl;
-    file << "KM[" << board->get_komi() << "]" << std::endl;
-    file << "RU[" << board->get_ruleset() << "]" << std::endl;
-    file << "RE[" << board->get_result() << "]" << std::endl;
-    file << "PB[" << board->get_black_player() << "]" << std::endl;
-    file << "PW[" << board->get_white_player() << "]" << std::endl;
+    file << "(;SZ[" << board_size << "]" << std::endl;
+    file << "KM[" << komi << "]" << std::endl;
+    file << "RU[" << ruleset << "]" << std::endl;
+    file << "RE[" << result << "]" << std::endl;
+    file << "PB[" << black_player << "]" << std::endl;
+    file << "PW[" << white_player << "]" << std::endl;
 
     // Write moves
     char current_player = 'B';
-    for (const auto& move : board->get_moves()) {
+    for (const auto& move : moves) {
         if (move.first == -1 && move.second == -1) {
             file << ";" << current_player << "[]" << std::endl;
         } else {
