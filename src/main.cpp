@@ -42,13 +42,7 @@ int main (int argc, char** argv)
     {
         is_running = renderer.handleEvents(board, &player);
         board->update();
-        board->print();
-        //board->print_heads();
-        board->print_groups();
         renderer.render(board);
-
-        std::cout << "continu";
-        std::cin >> is_running;
     }
 
     renderer.cleanup();
