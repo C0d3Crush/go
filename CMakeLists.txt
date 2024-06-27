@@ -5,22 +5,21 @@ project(GoBoard)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Add the executable
 add_executable(GoBoard
     src/main.cpp
     src/logic/board.cpp
     src/logic/node.cpp
-    src/ui/sdl_renderer.cpp
-    src/file/file_manager.cpp
+    src/ui/SDLRenderer.cpp  # Add SDLRenderer.cpp here
+    src/file/File_manager.cpp  # Add File_manager.cpp here
 )
 
-# Include directories
 target_include_directories(GoBoard PRIVATE
     ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_SOURCE_DIR}/src/logic
-    ${PROJECT_SOURCE_DIR}/src/ui
-    ${PROJECT_SOURCE_DIR}/src/file
+    ${PROJECT_SOURCE_DIR}/src/rendering  # Adjust if SDLRenderer.h is in a different directory
+    ${PROJECT_SOURCE_DIR}/src/file_management  # Adjust if File_manager.h is in a different directory
 )
+
 
 # Find SDL2
 find_package(SDL2 REQUIRED)

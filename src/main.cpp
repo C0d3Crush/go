@@ -1,6 +1,7 @@
 #include "logic/Board.h"
 #include "ui/Sdl_renderer.h"
 
+
 const int WINDOW_WIDTH = 600;       
 const int WINDOW_HEIGHT = 600;
 const int BOARD_MARGIN = 30;
@@ -46,7 +47,7 @@ int main (int argc, char** argv)
         //board->print_heads();
         board->print_groups();
         renderer.render(board);
-
+        
         std::cout << "continu";
         std::cin >> is_running;
     }

@@ -1,4 +1,3 @@
-#include "logic/Board.h"
 #include "Board.h"
 
 // Constructor
@@ -29,7 +28,6 @@ Board::Board(int size, std::vector<Node>& vect, const std::string file_path)
         }
     }
 }
-
 
 Board::Board(int size, std::vector<Node>& vect)
 {
@@ -242,13 +240,13 @@ int Board::height()
 }
 
 
-int Board::add_move(int x, int y, char player)
+int Board::add_move(int x, int y, char p)
 {
     int index = get_index(x, y);
     nodes[index].set_index(index);
     if (nodes[index].get_player() == '.')
     {
-        nodes[index].set_player(player);
+        nodes[index].set_player(p);
         return 0;
     }
     else 
@@ -416,7 +414,13 @@ void Board::reset_visited()
     }
 }
 
-void Board::reset_children()
+void Board::reset_tree()
+{
+    reset_children();
+    reset_parent();
+}
+
+void Board::reset_children() 
 {
     for (int i = 0; i < nodes.size(); i++) 
     {
@@ -435,7 +439,7 @@ void Board::reset_parent()
     }
 }
 
-void Board::reset()
+void Board::reset_stones()
 {
     for (int i = 0; i < nodes.size(); i++)
     {
@@ -452,9 +456,9 @@ void Board::print()
         std::cout<<i;
         for (int j = 0; j < w; j++)
         {
-            char player = nodes[get_index(j ,i)].get_player();
+            char p = nodes[get_index(j ,i)].get_player();
 
-            std::cout << player;
+            std::cout << p;
         }
         std::cout << std::endl;
     }
@@ -465,7 +469,7 @@ void Board::print()
 void Board::update_heads()
 {
     heads.resize(0);
-    reset_visited();
+    //reset_visited();
 
     for(int k = 0; k < nodes.size(); k++ )
     {
@@ -501,7 +505,7 @@ bool Board::update()
         }
         else if (cycle < move_count)
         {
-            reset();
+            reset_stones();
             player = 'B';
 
             for (move_count = 0; move_count < cycle; move_count++)
@@ -524,9 +528,18 @@ bool Board::update()
         }
         if (cycle == move_count)
         {
-            //std::cout << "up to date" << std::endl;
-            //print();
-            return false;
+            // ask user to input a move
+            int x, y;
+            std::cout << "player " << player << " enter move:" << std::endl;
+            std::cout << "x: "<< std::endl;
+            std::cin >> x;
+            std::cout << "y: "<< std::endl;
+            std::cin >> y;
+
+            moves.push_back({x, y});     
+            cycle++;       
+
+            return true;
         } 
 }
 
@@ -535,24 +548,19 @@ void Board::set_cycle(int c)
     cycle = c;
 }
 
-/**
- * Prints all children of a node.
- *
- * @param node this will be viewed the head.
- * @return a vector aof all children an childrens children.
- */
 std::vector<Node*> Board::get_group(Node* head)
 {
-
     std::vector<Node*> nodes;
-
     reset_visited();
-
     dfs_group(head, &nodes);
 
     return nodes;
 }
-
+/**
+ * @brief IMPORTANT: If this function return false it means this head has no children
+ *  
+ * this behaiviour could be usefull to check if a ko happend?
+ */
 bool Board::dfs_group(Node *head, std::vector<Node *> *nodes)
 {
     if (head->get_visited()) return 0;
@@ -607,61 +615,46 @@ void Board::print_coords(int index)
 }
 
 
-void Board::update_cycle(char player)
+void Board::update_cycle(char p)
 {
-
-    update_groups();
-    update_liberties();
-    update_heads();
-
-    if (player == 'W') {player = 'B';}
-    else {player = 'W';}
-
-    update_life(player);
-
-    if (player == 'W') {player = 'B';}
-    else {player = 'W';}
-
-    update_groups();
-    update_liberties();
-    update_heads();
-
-    update_life (player);
-
-}
-
-void Board::update_groups()
-{
-    reset_children();
-    reset_parent();
-
-        for (int i = 0; i < nodes.size(); i++)
-        {
-            reset_visited();
-            build_dfs(i);
-        }
-
-
-}
-
-void Board::update_liberties()
-{
-    for(int i = 0; i < h; i++)
+    for (int i = 0; i < 2; i++)
     {
-        for (int j = 0; j < w; j++)
+        if (p == 'W') {p = 'B';}
+        else {p = 'W';}
+
+        update_trees();
+
+        for(int y = 0; y < h; y++)
         {
-            int l = get_liberties(j, i);
-            int index = get_index(j, i);
-            nodes[index].set_liberties(l);
-        }
+            for (int x = 0; x < w; x++)
+            {
+                update_liberties(x, y);
+            }
+        }    
+        
+        update_heads();
+        update_life(p);
     }
 }
-
-void Board::update_life(char player)
+void Board::update_trees()
+{
+    reset_tree();
+    for (int i = 0; i < nodes.size(); i++)
+    {
+        reset_visited();
+        build_dfs(i);
+    }
+}
+void Board::update_liberties(int x, int y)
+{
+    int liberties = get_liberties(x, y);
+    int index = get_index(x, y);
+    nodes[index].set_liberties(liberties);
+}
+void Board::update_life(char p)
 {
     for (auto head : heads)
     {
-
         std::vector<Node*> group = get_group(head);
         std::vector<int> liberties_update;
 
@@ -679,7 +672,7 @@ void Board::update_life(char player)
             else life = true;
         }
 
-        if (!life && head->get_player() == player) 
+        if (!life && head->get_player() == p) 
         {
             remove_stones(head); 
         }

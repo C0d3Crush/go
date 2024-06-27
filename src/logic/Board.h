@@ -1,8 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "../file/File_manager.h"
-
 #include <vector>
 #include <string>
 #include <utility>
@@ -10,6 +8,8 @@
 #include <SDL2/SDL.h>
 
 #include "Node.h"
+#include "file/File_manager.h"
+
 
 class Board {
 private:
@@ -47,16 +47,19 @@ private:
 
     // for update
     void update_cycle(char player);
-    void update_groups();
-    void update_liberties();
+    void update_trees();
+    void update_liberties(int x, int y);
     void update_life(char player);
     void update_heads();
 
     // reset
-    void reset_visited();
+    void reset_tree();
     void reset_children();
     void reset_parent();
-    void reset();
+
+    void reset_visited();
+    
+    void reset_stones();
 
     // access function
     int size();
@@ -82,8 +85,9 @@ private:
     int remove_stones(Node* head);
 
 public:
-    Board(int size, std::vector<Node>& vect, const std::string file_path);
+    //Board(int size, std::vector<Node>& vect, const std::string file_path);
     Board(int size, std::vector<Node>& vect);
+    Board(int size, std::vector<Node>& vect, const std::string file_path);
 
     ~Board();
 
