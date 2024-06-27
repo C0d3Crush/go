@@ -530,9 +530,18 @@ bool Board::update()
         }
         if (cycle == move_count)
         {
-            //std::cout << "up to date" << std::endl;
-            //print();
-            return false;
+            // ask user to input a move
+            int x, y;
+            std::cout << "player " << player << " enter move:" << std::endl;
+            std::cout << "x: "<< std::endl;
+            std::cin >> x;
+            std::cout << "y: "<< std::endl;
+            std::cin >> y;
+
+            moves.push_back({x, y});     
+            cycle++;       
+
+            return true;
         } 
 }
 
