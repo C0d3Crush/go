@@ -213,13 +213,13 @@ int Board::height()
 }
 
 
-int Board::add_move(int x, int y, char player)
+int Board::add_move(int x, int y, char p)
 {
     int index = get_index(x, y);
     nodes[index].set_index(index);
     if (nodes[index].get_player() == '.')
     {
-        nodes[index].set_player(player);
+        nodes[index].set_player(p);
         return 0;
     }
     else 
@@ -429,9 +429,9 @@ void Board::print()
         std::cout<<i;
         for (int j = 0; j < w; j++)
         {
-            char player = nodes[get_index(j ,i)].get_player();
+            char p = nodes[get_index(j ,i)].get_player();
 
-            std::cout << player;
+            std::cout << p;
         }
         std::cout << std::endl;
     }
@@ -520,7 +520,11 @@ std::vector<Node*> Board::get_group(Node* head)
 
     return nodes;
 }
-
+/**
+ * @brief IMPORTANT: If this function return false it means this head has no children
+ *  
+ * this behaiviour could be usefull to check if a ko happend?
+ */
 bool Board::dfs_group(Node *head, std::vector<Node *> *nodes)
 {
     if (head->get_visited()) return 0;
@@ -567,38 +571,21 @@ void Board::print_groups()
         std::cout << std::endl;
     }
     std::cout << std::endl;
-
-    /*
-    reset_visited();
-    for (int k = 0; k < nodes.size(); k++)
-    {
-        //nodes[k].set_visited(true);
-        if (nodes[k].get_player() != '.' && !nodes[k].get_visited())
-        {
-            std::vector<Node*> group = get_group(&nodes[k]);
-            std::cout << "Group starting at (" << get_x(k) << ", " << get_y(k) << "), Color: " << nodes[k].get_player() << std::endl;
-
-            for (const auto& node : group) 
-            {
-                int index = node->get_index();
-                std::cout << "  ├── (" << get_x(index) << ", " << get_y(index) << ")" << std::endl;
-            }
-        }
-    }
-    std::cout << std::endl;
-    */
 }
 
 void Board::print_coords(int index)
 {
     std::cout << "Coords: (" << get_x(index) << ", " << get_y(index) << ")" << std::endl; 
 }
-void Board::update_cycle(char player)
+
+
+
+void Board::update_cycle(char p)
 {
     for (int i = 0; i < 2; i++)
     {
-        if (player == 'W') {player = 'B';}
-        else {player = 'W';}
+        if (p == 'W') {p = 'B';}
+        else {p = 'W';}
 
         update_trees();
 
@@ -611,7 +598,7 @@ void Board::update_cycle(char player)
         }    
         
         update_heads();
-        update_life(player);
+        update_life(p);
     }
 }
 void Board::update_trees()
@@ -629,7 +616,7 @@ void Board::update_liberties(int x, int y)
     int index = get_index(x, y);
     nodes[index].set_liberties(liberties);
 }
-void Board::update_life(char player)
+void Board::update_life(char p)
 {
     for (auto head : heads)
     {
@@ -650,7 +637,7 @@ void Board::update_life(char player)
             else life = true;
         }
 
-        if (!life && head->get_player() == player) 
+        if (!life && head->get_player() == p) 
         {
             remove_stones(head); 
         }
