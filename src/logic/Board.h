@@ -80,7 +80,7 @@ private:
     int remove_stones(Node* head);
 
 public:
-    //Board(int size, std::vector<Node>& vect, const std::string file_path);
+    Board(int size, std::vector<Node>& vect, const std::string file_path);
     Board(int size, std::vector<Node>& vect);
 
     ~Board();
