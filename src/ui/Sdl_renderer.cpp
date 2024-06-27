@@ -59,7 +59,7 @@ bool SDLRenderer::handleEvents(Board* board, char* player)
                 case SDLK_s:
                     std::cout << "saving..." <<std::endl;
                     File_manager file_manager;
-                    file_manager.saveSGF("../src/file/data/current.sgf", board->size(), board->get_komi(), board->get_ruleset(), board->get_result(), board->get_black_player(), board->get_white_player(), board->get_moves());
+                    file_manager.saveSGF("../src/file/data/stored_file.sgf", board->size(), board->get_komi(), board->get_ruleset(), board->get_result(), board->get_black_player(), board->get_white_player(), board->get_moves());
             }
         }
     }

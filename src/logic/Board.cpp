@@ -530,6 +530,11 @@ bool Board::update()
             }
             update_cycle(player);     
             move_count++;
+
+            std::cout << "saving..." <<std::endl;
+            File_manager file_manager;
+            file_manager.saveSGF("../src/file/data/current.sgf", size(), get_komi(), get_ruleset(), get_result(), get_black_player(), get_white_player(), get_moves());
+
             return true;
         }
         else if (cycle < move_count)
@@ -553,6 +558,11 @@ bool Board::update()
                 }
                 update_cycle(player);     
             }
+
+                std::cout << "saving..." <<std::endl;
+                File_manager file_manager;
+                file_manager.saveSGF("../src/file/data/current.sgf", size(), get_komi(), get_ruleset(), get_result(), get_black_player(), get_white_player(), get_moves());
+
             return true;
         }
         if (cycle == move_count)
