@@ -2,6 +2,8 @@
 #include <sstream>
 #include <fstream>
 
+#include "logic/Board.h"
+
 class File_manager
 {
 private:
@@ -11,5 +13,6 @@ public:
     ~File_manager();
 
     std::vector<std::pair<int, int>> parseSGF();
+    void saveSGF(const std::string& file_path, Board* board);
 
 };

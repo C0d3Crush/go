@@ -75,3 +75,34 @@ std::vector<std::pair<int, int>> File_manager::parseSGF()
     }
     return moves;
 }
+void File_manager::saveSGF(const std::string& file_path, Board* board)
+{
+    std::ofstream file(file_path);
+    if (!file) {
+        std::cerr << "Failed to open SGF file for writing: " << file_path << std::endl;
+        return;
+    }
+
+    // Write game properties
+    file << "(;SZ[" << board->size() << "]" << std::endl;
+    file << "KM[" << board->get_komi() << "]" << std::endl;
+    file << "RU[" << board->get_ruleset() << "]" << std::endl;
+    file << "RE[" << board->get_result() << "]" << std::endl;
+    file << "PB[" << board->get_black_player() << "]" << std::endl;
+    file << "PW[" << board->get_white_player() << "]" << std::endl;
+
+    // Write moves
+    char current_player = 'B';
+    for (const auto& move : board->get_moves()) {
+        if (move.first == -1 && move.second == -1) {
+            file << ";" << current_player << "[]" << std::endl;
+        } else {
+            char x = 'a' + move.first;
+            char y = 'a' + move.second;
+            file << ";" << current_player << "[" << x << y << "]" << std::endl;
+        }
+        current_player = (current_player == 'B') ? 'W' : 'B';
+    }
+
+    file << ")" << std::endl;
+}
