@@ -85,7 +85,7 @@ void File_manager::saveSGF(const std::string& file_path, int board_size, float k
     }
 
     // Write game properties
-    file << "(;SZ[" << board_size << "]" << std::endl;
+    file << "(;SZ[" << sqrt(board_size) << "]" << std::endl;
     file << "KM[" << komi << "]" << std::endl;
     file << "RU[" << ruleset << "]" << std::endl;
     file << "RE[" << result << "]" << std::endl;
